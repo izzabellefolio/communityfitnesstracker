@@ -1,0 +1,269 @@
+/* routine-detail.component.css */
+
+/* Fade in animations */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header card styling */
+.header-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px;
+}
+
+.header-card .back-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.header-card .back-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.header-card h2 {
+  color: white;
+  font-size: 1.8rem;
+}
+
+/* Section cards */
+.card-section {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.card-section:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+  transform: translateY(-2px);
+}
+
+/* Exercise items */
+.exercise-item {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f1f3f5;
+  transition: background-color 0.2s ease;
+}
+
+.exercise-item:hover {
+  background-color: #f8f9fa;
+}
+
+.exercise-item:last-child {
+  border-bottom: none;
+}
+
+.exercise-item h6 {
+  color: #2c3e50;
+  font-size: 1rem;
+}
+
+/* Intensity badges */
+.intensity-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 20px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.intensity-badge:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* Add button styling */
+.add-btn {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 87, 108, 0.3);
+}
+
+/* Edit form */
+.edit-exercise-form {
+  background: #f8f9fa;
+  padding: 1.25rem;
+  border-radius: 12px;
+  border-left: 4px solid #4dabf7;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.edit-exercise-form input,
+.edit-exercise-form select {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-exercise-form input:focus,
+.edit-exercise-form select:focus {
+  border-color: #4dabf7;
+  box-shadow: 0 0 0 3px rgba(77, 171, 247, 0.1);
+  outline: none;
+}
+
+/* Workout mode overlay */
+.workout-overlay {
+  background: rgba(248, 249, 250, 0.95);
+  backdrop-filter: blur(8px);
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 2rem;
+}
+
+.workout-panel {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  max-width: 500px;
+  width: 100%;
+  animation: scaleIn 0.4s ease;
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Timer display */
+.timer-display {
+  font-size: 3rem;
+  color: #2c3e50;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  letter-spacing: -1px;
+}
+
+/* Progress bar */
+.progress {
+  border-radius: 20px;
+  background-color: #e9ecef;
+  overflow: hidden;
+}
+
+.progress-purple {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button styling */
+.btn {
+  border-radius: 12px;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  border: none;
+}
+
+.btn:not(.btn-outline):not(.btn-light) {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-light {
+  background: #f8f9fa;
+  color: #495057;
+  border: 1px solid #dee2e6;
+}
+
+.btn-light:hover {
+  background: #e9ecef;
+  border-color: #ced4da;
+}
+
+.btn-outline-light {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Text colors */
+.text-muted {
+  color: #6c757d !important;
+}
+
+.small {
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header-card .card-body {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+  
+  .timer-display {
+    font-size: 2.5rem;
+  }
+  
+  .workout-panel {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+}
+
+/* Loading spinner */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.25em;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f3f5;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #adb5bd;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #868e96;
+}

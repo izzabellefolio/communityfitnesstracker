@@ -1,0 +1,40 @@
+<div class="card h-100 shadow-sm" [class.border-success]="isCompleted">
+  <div class="card-body">
+    <!-- Header with Icon and Type -->
+    <div class="d-flex justify-content-between align-items-start mb-2">
+      <span class="fs-2">{{ getCategoryIcon() }}</span>
+      <span class="badge" [class]="'bg-' + getDifficultyColor()">
+        {{ challenge.difficulty | titlecase }}
+      </span>
+    </div>
+
+    <!-- Challenge Title -->
+    <h5 class="card-title">{{ challenge.title }}</h5>
+    
+    <!-- Description -->
+    <p class="card-text text-muted">{{ challenge.description }}</p>
+
+    <!-- Footer with Points and Difficulty -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <div>
+        <span class="badge bg-dark">{{ challenge.points }} pts</span>
+        <span class="badge ms-1" [class]="'bg-' + getDifficultyColor()">
+          {{ challenge.difficulty }}
+        </span>
+      </div>
+
+      <!-- Complete Button -->
+      <button 
+        *ngIf="showCompleteButton && !isCompleted"
+        class="btn btn-sm btn-success"
+        (click)="onComplete()">
+        Complete
+      </button>
+
+      <!-- Completed Badge -->
+      <span *ngIf="isCompleted" class="badge bg-success">
+        Completed
+      </span>
+    </div>
+  </div>
+</div>

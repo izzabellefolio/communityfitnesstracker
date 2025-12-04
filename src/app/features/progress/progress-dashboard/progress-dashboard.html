@@ -1,0 +1,124 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Progress Tracking</h2>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading your progress...</p>
+  </div>
+
+  <!-- Stats Cards & Info -->
+  <ng-container *ngIf="!loading">
+    <ng-container *ngIf="stats$ | async as stats">
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+          <app-stats-card
+            title="Current Streak"
+            [value]="totalStreak + ' days'"
+            subtitle="Keep it up!"
+            icon="🔥"
+            gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)">
+          </app-stats-card>
+        </div>
+        <div class="col-md-3 mb-3">
+          <app-stats-card
+            title="Total Workouts"
+            [value]="stats.totalWorkouts"
+            subtitle="Sessions completed"
+            icon="💪"
+            gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)">
+          </app-stats-card>
+        </div>
+        <div class="col-md-3 mb-3">
+          <app-stats-card
+            title="Total Reps"
+            [value]="stats.totalReps"
+            subtitle="All exercises combined"
+            icon="📈"
+            gradient="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)">
+          </app-stats-card>
+        </div>
+        <div class="col-md-3 mb-3">
+          <app-stats-card
+            title="Calories Burned"
+            [value]="Math.round(stats.caloriesBurned)"
+            subtitle="Total calories"
+            icon="🔥"
+            gradient="linear-gradient(135deg, #fa709a 0%, #fee140 100%)">
+          </app-stats-card>
+        </div>
+      </div>
+
+      <!-- Last Workout Info -->
+      <div class="alert alert-info mb-4">
+        <strong>Last Workout:</strong>
+        {{ stats.lastWorkoutDate ? (stats.lastWorkoutDate | date:'fullDate') : 'No workouts yet' }}
+      </div>
+
+      <!-- Weight Tracking & Charts -->
+      <div class="row mb-4 g-4">
+        <!-- Left Side: Compact Weight Tracking -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card shadow-lg text-white weight-card-short">
+            <div class="card-body p-3">
+              <!-- Header -->
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="mb-0 fw-bold">⚖️ Weight Tracking</h6>
+                <button 
+                  class="btn btn-outline-light btn-sm"
+                  (click)="showWeightUpdate = !showWeightUpdate">
+                  {{ showWeightUpdate ? 'Cancel' : 'Update' }}
+                </button>
+              </div>
+
+              <!-- Current Weight -->
+              <div class="text-center mb-3">
+                <h2 class="fw-bold mb-0">{{ currentWeight }}</h2>
+                <small class="opacity-75">kg</small>
+              </div>
+
+              <!-- Update Form -->
+              <div *ngIf="showWeightUpdate" class="update-section mb-2">
+                <div class="input-group mb-2 shadow-sm">
+                  <input 
+                    type="number" 
+                    class="form-control form-control-sm"
+                    [(ngModel)]="newWeight"
+                    placeholder="Enter weight"
+                    step="0.1"
+                    min="1">
+                  <span class="input-group-text">kg</span>
+                </div>
+                <button class="btn btn-light btn-sm w-100 fw-semibold" (click)="updateWeight()">
+                  💾 Save
+                </button>
+              </div>
+
+              <!-- Hint -->
+              <div *ngIf="!showWeightUpdate" class="text-center mt-1">
+                <small class="opacity-75 fst-italic">Click Update to change weight</small>
+              </div>
+            </div>
+          </div>
+          <!-- Workout Log Component -->
+          <app-workout-log></app-workout-log>
+        </div>
+
+        <!-- Right Side: Progress Charts -->
+        <div class="col-lg-8 col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-body">
+              <app-progress-chart></app-progress-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #loadingTemplate>
+    <p>Loading stats...</p>
+  </ng-template>
+</div>

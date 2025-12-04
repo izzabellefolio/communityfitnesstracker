@@ -1,0 +1,18 @@
+/* navbar-fix.css - minimal placeholder to satisfy build and provide navbar layout fixes */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  background: #0a0a0a;
+  border-bottom: 2px solid #6a0dad;
+}
+
+/* small spacing helper so body content doesn't hide behind fixed navbar */
+body {
+  padding-top: 80px;
+}
+
+/* add project-specific rules below */

@@ -1,0 +1,237 @@
+<div 
+  class="page-wrapper d-flex justify-content-center align-items-start py-5"
+  style="background: linear-gradient(135deg, #f0f4ff, #d9e6ff); min-height: 100vh;"
+>
+  <div 
+    class="card shadow-lg p-4 w-100"
+    style="max-width: 900px; border-radius: 15px; animation: fadeInUp 0.5s ease-out;"
+  >
+
+    <!-- Title -->
+    <h2 class="fw-bold mb-4" style="font-family: 'Poppins', sans-serif; color: #2a2a44;">
+      Create Custom Routine
+    </h2>
+
+    <!-- Step 1 -->
+    <div class="mb-4">
+      <h5 class="fw-semibold mb-3">1. Basic Information</h5>
+
+      <div class="mb-3">
+        <label class="form-label">Routine Name *</label>
+        <input 
+          type="text" 
+          class="form-control soft-input"
+          [(ngModel)]="routineName"
+          placeholder="e.g., Morning Full-Body Workout"
+        >
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description (Optional)</label>
+        <textarea 
+          class="form-control soft-input"
+          rows="3"
+          [(ngModel)]="routineDescription"
+          placeholder="Describe your routine..."
+        ></textarea>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Step 2 -->
+    <div class="mb-4">
+      <h5 class="fw-semibold mb-3">2. Schedule</h5>
+
+      <label class="form-label">Select Days *</label>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <button 
+          *ngFor="let day of daysOfWeek"
+          type="button"
+          class="btn soft-btn"
+          [style.background]="selectedDays.includes(day) ? 'linear-gradient(to right, #5a67d8, #7f9cf5)' : '#fff'"
+          [style.color]="selectedDays.includes(day) ? 'white' : '#5a67d8'"
+          style="border-radius: 10px; border: 1px solid #5a67d8;"
+          (click)="toggleDay(day)"
+        >
+          {{ day.substring(0, 3) }}
+        </button>
+      </div>
+
+      <div>
+        <label class="form-label">Time</label>
+        <input 
+          type="time" 
+          class="form-control soft-input"
+          [(ngModel)]="selectedTime"
+        >
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Step 3 -->
+    <div class="mb-4">
+      <h5 class="fw-semibold mb-3">3. Add Exercises *</h5>
+
+      <!-- Existing Exercise List -->
+      <div *ngIf="exercises.length > 0" class="mb-3">
+        <div class="list-group">
+          <div 
+            *ngFor="let ex of exercises; let i = index" 
+            class="list-group-item soft-list-item"
+          >
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>{{ ex.name }}</strong>
+                <span class="badge bg-secondary ms-2">{{ ex.type }}</span>
+                <span class="badge bg-info ms-1">{{ ex.intensity }}</span>
+                <br>
+                <small class="text-muted">
+                  {{ ex.sets }} sets × {{ ex.reps > 0 ? ex.reps + ' reps' : ex.duration + ' min' }}
+                </small>
+              </div>
+
+              <button 
+                type="button" 
+                class="btn btn-sm btn-outline-danger soft-btn"
+                (click)="removeExercise(i)"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Exercise Card -->
+      <div class="card p-3 soft-subcard">
+        <h6 class="fw-semibold mb-3">Add Exercise</h6>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Exercise Name</label>
+            <input 
+              type="text" 
+              class="form-control soft-input"
+              [(ngModel)]="currentExercise.name"
+              placeholder="e.g., Push-ups"
+            >
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Type</label>
+            <select class="form-select soft-input" [(ngModel)]="currentExercise.type">
+              <option *ngFor="let type of exerciseTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Sets</label>
+            <input 
+              type="number" 
+              class="form-control soft-input"
+              [(ngModel)]="currentExercise.sets"
+              min="1"
+            >
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Reps</label>
+            <input 
+              type="number" 
+              class="form-control soft-input"
+              [(ngModel)]="currentExercise.reps"
+              min="0"
+            >
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Duration (min)</label>
+            <input 
+              type="number" 
+              class="form-control soft-input"
+              [(ngModel)]="currentExercise.duration"
+              min="0"
+            >
+          </div>
+
+          <div class="col-md-12 mb-3">
+            <label class="form-label">Intensity</label>
+            <select class="form-select soft-input" [(ngModel)]="currentExercise.intensity">
+              <option *ngFor="let level of intensityLevels" [value]="level">{{ level }}</option>
+            </select>
+          </div>
+        </div>
+
+        <button 
+          type="button" 
+          class="btn text-white w-100 soft-btn"
+          style="background: linear-gradient(to right, #5a67d8, #7f9cf5);"
+          (click)="addExercise()"
+        >
+          + Add Exercise
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Buttons -->
+    <div class="d-flex justify-content-between mt-4">
+      <a routerLink="/routines" class="btn btn-outline-secondary soft-btn">
+        Cancel
+      </a>
+
+      <button 
+        type="button" 
+        class="btn text-white soft-btn"
+        style="background: linear-gradient(to right, #5a67d8, #7f9cf5);"
+        (click)="saveRoutine()"
+      >
+        Save Routine
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<style>
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Inputs */
+.soft-input {
+  border-radius: 10px !important;
+  border: 1px solid #c9d3ff !important;
+  transition: 0.25s;
+}
+.soft-input:focus {
+  border-color: #5a67d8 !important;
+  box-shadow: 0 0 5px rgba(90, 103, 216, 0.3) !important;
+}
+
+/* Buttons */
+.soft-btn {
+  border-radius: 10px !important;
+  transition: 0.25s;
+}
+.soft-btn:hover {
+  opacity: 0.9;
+}
+
+/* List items */
+.soft-list-item {
+  border-radius: 10px;
+  margin-bottom: 8px;
+  background: #f7f9ff;
+}
+
+/* Exercise form sub-card */
+.soft-subcard {
+  border-radius: 12px;
+  background: #f5f7ff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(90, 103, 216, 0.1);
+}
+</style>

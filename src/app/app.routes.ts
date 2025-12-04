@@ -1,3 +1,62 @@
 import { Routes } from '@angular/router';
 
-export const routes: Routes = [];
+import { Home } from './features/home/home';
+import { Login } from './features/auth/login/login';
+import { Register } from './features/auth/register/register';
+import { RoutineList} from './features/routine/routine-list/routine-list';
+import { RoutineCreate } from './features/routine/routine-create/routine-create';
+import { RoutineDetail } from './features/routine/routine-detail/routine-detail';
+import { PremadeRoutines } from './features/routine/premade-routines/premade-routines';
+import { ProgressDashboard } from './features/progress/progress-dashboard/progress-dashboard';
+import { ChallengeList } from './features/challenge/challenge-list/challenge-list';
+import { Leaderboard } from './features/leaderboard/leaderboard';
+import { LeaderboardComponent } from './features/leaderboard/leaderboard/leaderboard';
+
+export const routes: Routes = [
+    // Public routes
+  { path: '', component: Home },
+  { path: 'home', component: Home },
+  { path: 'login', component: Login },
+  { path: 'register', component: Register },
+  
+  // Protected routes (require authentication)
+  { 
+    path: 'routines', 
+    component: RoutineList //add canActivate: [authGuard] if using class-based guard
+  },
+  { 
+    path: 'routines/create', 
+    component: RoutineCreate
+  },
+  { 
+    path: 'routines/premade', 
+    component: PremadeRoutines
+  },
+  { 
+    path: 'routines/:id', 
+    component: RoutineDetail
+  },
+  { 
+    path: 'progress', 
+    component: ProgressDashboard
+  },
+  { 
+  path: 'challenges', 
+  component: ChallengeList
+},
+{ 
+  path: 'challenges/history', 
+  component: ChallengeList
+},
+{ 
+  path: 'challenges/:id', 
+  component: ChallengeList
+},
+  { 
+    path: 'leaderboard', 
+    component: LeaderboardComponent
+  },
+  
+  // Wildcard route
+  { path: '**', redirectTo: '' }
+];

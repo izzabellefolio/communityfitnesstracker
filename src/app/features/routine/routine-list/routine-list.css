@@ -1,0 +1,309 @@
+/* routine-list.css - SUBTLE & CONSISTENT THEME */
+
+/* ===== GLOBAL THEME MATCHING ===== */
+:root {
+  --primary-purple: #6a0dad;
+  --primary-purple-dark: #4a0072;
+  --primary-purple-light: #8a2be2;
+  --dark-bg: #0a0a0a;
+  --light-bg: #f8f9fa;
+  --text-dark: #2a2a44;
+  --text-light: #ffffff;
+  --accent-color: #9d4edd;
+  --card-bg: rgba(38, 38, 62, 0.9);
+  --card-border: rgba(106, 13, 173, 0.2);
+}
+
+/* ===== PAGE BACKGROUND ===== */
+.page-wrapper {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+  min-height: 100vh;
+  padding: 2rem;
+  position: relative;
+}
+
+.page-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(106, 13, 173, 0.1) 0%, transparent 25%),
+    radial-gradient(circle at 90% 80%, rgba(157, 78, 221, 0.1) 0%, transparent 25%);
+  z-index: 0;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== CONSISTENT CARD STYLES ===== */
+.routine-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(106, 13, 173, 0.1) inset;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.routine-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6a0dad, #9d4edd);
+  opacity: 0.8;
+}
+
+.routine-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(157, 78, 221, 0.4);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(106, 13, 173, 0.15);
+}
+
+/* ===== CARD HEADERS ===== */
+.card-header {
+  border-bottom: 1px solid rgba(106, 13, 173, 0.2);
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.card-title {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  position: relative;
+  display: inline-block;
+}
+
+.card-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, #6a0dad, #9d4edd);
+  border-radius: 1px;
+}
+
+/* ===== CONSISTENT PROPERTY STYLES ===== */
+.property-group {
+  margin-bottom: 1.25rem;
+}
+
+.property-label {
+  color: #9d4edd;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.property-value {
+  color: #e2e2f0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+/* ===== EXERCISE LISTS ===== */
+.exercise-list {
+  margin: 1.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.exercise-item {
+  color: #c5c5e3;
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+  position: relative;
+  list-style: none;
+  font-size: 0.95rem;
+}
+
+.exercise-item::before {
+  content: '•';
+  color: #9d4edd;
+  font-size: 1.2em;
+  position: absolute;
+  left: -1rem;
+  top: 0;
+}
+
+.exercise-count {
+  color: #9d9dc7;
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* ===== DIVIDERS ===== */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(106, 13, 173, 0.3), transparent);
+  margin: 2rem 0;
+  border: none;
+}
+
+/* ===== SUBTLE BUTTONS ===== */
+.btn-subtle {
+  background: rgba(106, 13, 173, 0.1);
+  border: 1px solid rgba(106, 13, 173, 0.3);
+  color: #9d4edd;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-subtle:hover {
+  background: rgba(106, 13, 173, 0.2);
+  border-color: rgba(157, 78, 221, 0.5);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* ===== TYPOGRAPHY CONSISTENCY ===== */
+.description {
+  color: #9d9dc7;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  font-style: italic;
+}
+
+.schedule-display {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.schedule-day {
+  background: rgba(106, 13, 173, 0.1);
+  color: #b8b8d6;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  border: 1px solid rgba(106, 13, 173, 0.2);
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 1rem;
+  }
+  
+  .routine-card {
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  .card-title {
+    font-size: 1.3rem;
+  }
+  
+  .schedule-display {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .routine-card {
+    padding: 1rem;
+  }
+  
+  .property-label {
+    font-size: 0.8rem;
+  }
+  
+  .property-value {
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== CONSISTENT ANIMATIONS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* ===== SCROLLBAR (MATCHING THEME) ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(26, 26, 46, 0.8);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(106, 13, 173, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(157, 78, 221, 0.7);
+}
+
+/* ===== UTILITY CLASSES FOR CONSISTENCY ===== */
+.text-accent {
+  color: #9d4edd;
+}
+
+.text-subtle {
+  color: #9d9dc7;
+}
+
+.border-subtle {
+  border-color: rgba(106, 13, 173, 0.2);
+}
+
+.bg-subtle {
+  background: rgba(106, 13, 173, 0.05);
+}
+/* EMERGENCY WHITE SPOT FIX */
+* {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Force all backgrounds to be dark */
+div, span, p, h1, h2, h3, h4, h5, h6, a, li, ul, ol, section, article, main, aside, header, footer {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+}

@@ -1,0 +1,80 @@
+<!-- progress-chart.html -->
+<div class="progress-chart-container">
+  <!-- Period Selection -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="mb-0">Progress Charts</h5>
+    <div class="btn-group btn-group-sm" role="group">
+      <button 
+        type="button" 
+        class="btn"
+        [class.btn-primary]="selectedPeriod === 'week'"
+        [class.btn-outline-primary]="selectedPeriod !== 'week'"
+        (click)="changePeriod('week')">
+        Week
+      </button>
+      <button 
+        type="button" 
+        class="btn"
+        [class.btn-primary]="selectedPeriod === 'month'"
+        [class.btn-outline-primary]="selectedPeriod !== 'month'"
+        (click)="changePeriod('month')">
+        Month
+      </button>
+      <button 
+        type="button" 
+        class="btn"
+        [class.btn-primary]="selectedPeriod === 'year'"
+        [class.btn-outline-primary]="selectedPeriod !== 'year'"
+        (click)="changePeriod('year')">
+        Year
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading charts...</span>
+    </div>
+    <p class="mt-3">Loading your progress data...</p>
+  </div>
+
+  <!-- Charts -->
+  <div *ngIf="!loading" class="charts-grid">
+    <!-- Calories Line Chart -->
+    <div class="chart-card mb-4">
+      <div class="chart-wrapper" style="height: 300px;">
+        <canvas 
+          baseChart
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          [type]="lineChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Workouts Bar Chart -->
+    <div class="chart-card mb-4">
+      <div class="chart-wrapper" style="height: 300px;">
+        <canvas 
+          baseChart
+          [data]="barChartData"
+          [options]="barChartOptions"
+          [type]="barChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- Reps Bar Chart -->
+    <div class="chart-card mb-4">
+      <div class="chart-wrapper" style="height: 300px;">
+        <canvas 
+          baseChart
+          [data]="repsChartData"
+          [options]="repsChartOptions"
+          [type]="repsChartType">
+        </canvas>
+      </div>
+    </div>
+  </div>
+</div>

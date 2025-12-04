@@ -1,1 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Fixed imports: do NOT include leading "src/" — paths are resolved relative to src/ */
+@import 'assets/css/navbar-fix.css';
+@import 'app/features/home/home.css';

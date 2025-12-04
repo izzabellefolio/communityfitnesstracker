@@ -1,0 +1,123 @@
+<div class="card shadow-sm border-0 rounded-4">
+  <div class="card-header bg-white border-0">
+    <h5 class="mb-0 fw-bold">Workout History</h5>
+  </div>
+
+  <div class="card-body">
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="text-center py-4">
+      <div class="spinner-border" role="status"></div>
+      <p class="text-muted small mt-2">Fetching your progress...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && workoutLogs.length === 0" class="text-center py-5">
+      <img 
+        src="assets/empty-log.svg" 
+        alt="" 
+        height="120"
+        class="opacity-75 mb-3"
+      />
+      <p class="text-muted mb-3">You haven't logged any workouts yet.</p>
+      <a routerLink="/routines" class="btn btn-primary px-4 rounded-pill">
+        Start Your First Workout
+      </a>
+    </div>
+
+    <!-- Workout Logs Table -->
+    <div *ngIf="!loading && workoutLogs.length > 0" class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Routine</th>
+            <th>Exercises</th>
+            <th>Total Reps</th>
+            <th>Calories</th>
+            <th>Duration</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let log of workoutLogs">
+            <td>{{ log.date | date:'short' }}</td>
+            <td class="fw-semibold">{{ log.routineName }}</td>
+            <td>{{ log.exercises.length }}</td>
+            <td>{{ log.totalReps }}</td>
+            <td>{{ Math.round(log.caloriesBurned) }} cal</td>
+            <td>{{ log.duration }} min</td>
+            <td class="text-center">
+              <button 
+                class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                (click)="viewDetails(log)">
+                View
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Workout Detail Modal -->
+<div 
+  *ngIf="selectedLog" 
+  class="modal d-block fade show"
+  tabindex="-1"
+  style="background: rgba(0,0,0,0.4)">
+  
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content rounded-3 shadow">
+
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold">{{ selectedLog.routineName }}</h5>
+        <button class="btn-close" (click)="closeDetails()"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mb-2"><strong>Date:</strong> {{ selectedLog.date | date:'full' }}</div>
+        <div class="mb-2"><strong>Duration:</strong> {{ selectedLog.duration }} minutes</div>
+        <div class="mb-2"><strong>Total Reps:</strong> {{ selectedLog.totalReps }}</div>
+        <div class="mb-3"><strong>Calories Burned:</strong> {{ Math.round(selectedLog.caloriesBurned) }} cal</div>
+
+        <h6 class="fw-semibold mb-2">Exercises</h6>
+        <ul class="list-group mb-3">
+          <li 
+            *ngFor="let exercise of selectedLog.exercises"
+            class="list-group-item d-flex justify-content-between align-items-start">
+            
+            <div>
+              <strong>{{ exercise.name }}</strong> • {{ exercise.type }}
+              <br />
+              <small class="text-muted">
+                {{ exercise.sets }} sets × 
+                {{ exercise.reps > 0 ? exercise.reps + ' reps' : exercise.duration + ' min' }}
+              </small>
+            </div>
+
+            <span class="badge bg-secondary rounded-pill">
+              {{ exercise.intensity }}
+            </span>
+          </li>
+        </ul>
+
+        <div *ngIf="selectedLog.notes">
+          <strong>Notes:</strong>
+          <p class="text-muted">{{ selectedLog.notes }}</p>
+        </div>
+      </div>
+
+      <div class="modal-footer border-0">
+        <button class="btn btn-secondary rounded-pill px-4" (click)="closeDetails()">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

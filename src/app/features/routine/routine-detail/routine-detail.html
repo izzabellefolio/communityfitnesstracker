@@ -1,0 +1,204 @@
+<div class="container mt-4">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5 fade-in">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-3 text-muted">Loading routine...</p>
+  </div>
+
+  <!-- ROUTINE DETAILS -->
+  <div *ngIf="!loading && routine && !workoutStarted" class="fade-in">
+
+    <!-- HEADER -->
+    <div class="card shadow-lg border-0 mb-4 header-card">
+      <div class="card-body p-4 d-flex justify-content-between align-items-center">
+
+        <div>
+          <a routerLink="/routines" class="back-link">← Back</a>
+
+          <h2 class="fw-bold mt-2 mb-1">{{ routine.name }}</h2>
+
+          <small class="opacity-75">
+            {{ routine.exercises.length }} exercises • {{ routine.schedule.join(', ') }}
+          </small>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+
+          <button class="btn btn-outline-light rounded-pill px-3"
+                  (click)="deleteRoutine()">
+            {{ isPremade ? 'Remove' : 'Delete' }}
+          </button>
+
+          <button class="btn btn-light text-dark fw-semibold rounded-pill px-4 shadow-sm"
+                  (click)="startWorkout()">
+            Start
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="card card-section fade-in shadow-sm border-0 rounded-4 mb-4 p-4">
+      <h5 class="fw-bold mb-3">Routine Details</h5>
+      <p class="text-muted">{{ routine.description || 'No description provided.' }}</p>
+
+      <hr>
+
+      <div class="row small text-muted mt-3">
+        <div class="col-md-6 mb-2">
+          <strong class="text-dark">Days:</strong> {{ routine.schedule.join(', ') }}
+        </div>
+        <div class="col-md-6 mb-2">
+          <strong class="text-dark">Time:</strong> {{ routine.time }}
+        </div>
+      </div>
+    </div>
+
+    <!-- EXERCISES -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
+      <div class="card-header bg-white border-0 p-4">
+        <h5 class="fw-bold mb-0">Exercises</h5>
+      </div>
+
+      <div class="card-body p-0">
+
+        <div class="list-group list-group-flush">
+  <div *ngFor="let exercise of routine.exercises; let i = index" class="list-group-item exercise-item fade-in">
+
+    <!-- Display mode -->
+<div *ngIf="editingExerciseIndex !== i" class="d-flex justify-content-between align-items-center">
+  <div>
+    <h6 class="fw-bold mb-1">{{ exercise.name }}</h6>
+    <div class="small text-muted">
+      {{ exercise.type }} • {{ exercise.sets }} sets
+      <span *ngIf="exercise.reps">• {{ exercise.reps }} reps</span>
+      <span *ngIf="exercise.duration">• {{ exercise.duration }} min</span>
+    </div>
+  </div>
+
+  <div class="d-flex align-items-center gap-2">
+    <span class="badge intensity-badge px-3 py-2"
+      [ngClass]="{
+        'bg-success': exercise.intensity === 'Low',
+        'bg-warning': exercise.intensity === 'Medium',
+        'bg-danger': exercise.intensity === 'High'
+      }">
+      {{ exercise.intensity }}
+    </span>
+
+    <!-- Only show edit/delete for custom exercises -->
+    <ng-container *ngIf="exercise.isCustom">
+      <button class="btn btn-sm btn-outline-primary" (click)="editExercise(i)">Edit</button>
+      <button class="btn btn-sm btn-outline-danger" (click)="deleteExercise(i)">Delete</button>
+    </ng-container>
+  </div>
+</div>
+
+
+    <!-- Edit mode -->
+    <div *ngIf="editingExerciseIndex === i" class="edit-exercise-form">
+      <input [(ngModel)]="exerciseToAdd.name" placeholder="Name" class="form-control mb-1">
+      <input [(ngModel)]="exerciseToAdd.type" placeholder="Type" class="form-control mb-1">
+      <input type="number" [(ngModel)]="exerciseToAdd.sets" placeholder="Sets" class="form-control mb-1">
+      <input type="number" [(ngModel)]="exerciseToAdd.reps" placeholder="Reps" class="form-control mb-1">
+      <input type="number" [(ngModel)]="exerciseToAdd.duration" placeholder="Duration (min)" class="form-control mb-1">
+      <select [(ngModel)]="exerciseToAdd.intensity" class="form-select mb-1">
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+      </select>
+
+      <div class="mt-2">
+        <button class="btn btn-success btn-sm me-2" (click)="saveExercise()">Save</button>
+        <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+      </div>
+    </div>
+
+    <!-- ADD BUTTON -->
+    <div *ngIf="!isPremade" class="card shadow-sm border-0 rounded-4 p-4 mb-5 text-center fade-in">
+      <h5 class="fw-bold mb-3">Add Exercise</h5>
+
+      <button class="btn add-btn rounded-pill px-4"
+              (click)="addExercise({ name: ' ', type: ' ', sets: null, reps: null, duration: null, intensity: 'Low' })">
+        New
+      </button>
+    </div>
+  </div>
+
+  <!-- WORKOUT MODE -->
+  <div *ngIf="workoutStarted" class="workout-overlay fade-in">
+
+    <div class="workout-panel">
+
+      <h3 class="fw-bold mb-3 text-center">{{ getCurrentExercise()?.name }}</h3>
+
+      <p class="text-muted text-center mb-4">
+        {{ getCurrentExercise()?.type }}
+        • {{ getCurrentExercise()?.sets }} sets
+        <span *ngIf="getCurrentExercise()?.reps">• {{ getCurrentExercise()?.reps }} reps</span>
+        <span *ngIf="getCurrentExercise()?.duration">• {{ getCurrentExercise()?.duration }} min</span>
+      </p>
+
+      <div class="timer-display text-center fw-bold my-4">
+        {{ formatTime(exerciseTimer) }}
+      </div>
+
+      <!-- CONTROLS -->
+      <div class="d-flex justify-content-center gap-3 my-3">
+        <button class="btn btn-light rounded-pill px-4 shadow-sm"
+                (click)="previousExercise()"
+                [disabled]="currentExerciseIndex === 0">
+          Previous
+        </button>
+
+        <button *ngIf="isTimerRunning"
+                class="btn btn-warning rounded-pill px-4"
+                (click)="pauseTimer()">
+          Pause
+        </button>
+
+        <button *ngIf="!isTimerRunning"
+                class="btn btn-success rounded-pill px-4"
+                (click)="resumeTimer()">
+          Resume
+        </button>
+
+        <button class="btn btn-light rounded-pill px-4 shadow-sm"
+                (click)="nextExercise()"
+                [disabled]="currentExerciseIndex === routine!.exercises.length - 1">
+          Next
+        </button>
+      </div>
+
+      <!-- PROGRESS -->
+      <div class="progress mt-4" style="height: 12px;">
+        <div class="progress-bar progress-purple"
+             role="progressbar"
+             [style.width.%]="getProgressPercentage()"></div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="d-flex justify-content-between mt-4">
+        <button class="btn btn-outline-danger rounded-pill px-4" (click)="cancelWorkout()">
+          Cancel
+        </button>
+
+        <button class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="completeWorkout()">
+          Complete
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

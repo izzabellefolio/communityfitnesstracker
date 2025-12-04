@@ -1,0 +1,112 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(135deg, #f0f4ff, #d9e6ff);">
+  <div class="card shadow-lg p-4" style="max-width: 420px; width: 100%; border-radius: 15px; animation: fadeInUp 0.5s ease-out;">
+
+    <h2 class="text-center mb-4 fw-bold" style="font-family: 'Poppins', sans-serif;">Create Account</h2>
+
+    <div *ngIf="error" class="alert alert-danger d-flex align-items-center py-2">
+      <i class="fa fa-exclamation-circle me-2"></i> {{ error }}
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <!-- Full Name -->
+      <div class="mb-3">
+        <label>Full Name</label>
+        <input type="text" class="form-control" formControlName="displayName" placeholder="Enter your full name"
+          [class.is-invalid]="registerForm.get('displayName')?.touched && registerForm.get('displayName')?.invalid">
+        <div class="invalid-feedback" *ngIf="registerForm.get('displayName')?.errors?.['required']">Full name is required</div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('displayName')?.errors?.['minlength']">Minimum 2 characters</div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label>Email</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+          <input type="email" class="form-control" formControlName="email" placeholder="Enter your email"
+            [class.is-invalid]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+        </div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('email')?.errors?.['email']">Enter a valid email</div>
+      </div>
+
+      <!-- Password -->
+      <div class="mb-3">
+        <label>Password</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-lock"></i></span>
+          <input [type]="showPassword ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Enter your password"
+            [class.is-invalid]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+          <button type="button" class="btn btn-outline-secondary" (click)="togglePassword()">
+            <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('password')?.errors?.['minlength']">Minimum 6 characters</div>
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="mb-3">
+        <label>Confirm Password</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="fa fa-lock"></i></span>
+          <input [type]="showConfirmPassword ? 'text' : 'password'" class="form-control" formControlName="confirmPassword" placeholder="Confirm password"
+            [class.is-invalid]="registerForm.get('confirmPassword')?.touched && registerForm.get('confirmPassword')?.invalid || registerForm.hasError('notMatching')">
+          <button type="button" class="btn btn-outline-secondary" (click)="toggleConfirmPassword()">
+            <i class="fa" [ngClass]="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
+        </div>
+        <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Confirm your password</div>
+        <div class="text-danger small mt-1" *ngIf="registerForm.hasError('notMatching')">Passwords do not match.</div>
+      </div>
+
+      <!-- Submit Button -->
+      <button class="btn w-100 text-white fw-bold" style="background: linear-gradient(to right, #5a67d8, #7f9cf5); border-radius: 10px; transition: 0.3s;"
+        type="submit" [disabled]="loading || registerForm.invalid">
+        <span *ngIf="!loading">Sign Up</span>
+        <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+      </button>
+
+    </form>
+
+    <div class="mt-3 text-center">
+      <small>Already have an account? <a routerLink="/login">Sign in</a></small>
+    </div>
+
+  </div>
+</div>
+
+<style>
+/* Card Animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Input Focus */
+.form-control:focus {
+  border-color: #5a67d8;
+  box-shadow: 0 0 5px rgba(90, 103, 216, 0.3);
+}
+
+/* Input Icons */
+.input-group-text {
+  background: #f8f9fa;
+  border-radius: 10px 0 0 10px;
+}
+
+/* Link Hover */
+a {
+  color: #5a67d8;
+  text-decoration: none;
+  transition: 0.2s;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Button Hover */
+.btn:hover {
+  opacity: 0.9;
+}
+</style>
