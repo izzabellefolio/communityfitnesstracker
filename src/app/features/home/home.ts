@@ -127,6 +127,16 @@ export class Home implements OnInit, OnDestroy {
       next: (metrics) => {
         console.log('UserService metrics updated:', metrics);
         this.userMetrics = metrics;
+        // Keep the form in sync so the modal shows current values immediately.
+        if (this.metricsForm && metrics) {
+          this.metricsForm.patchValue({
+            weight: metrics.weight ?? null,
+            height: metrics.height ?? null,
+            metabolism: metrics.metabolism ?? 'medium',
+            gender: metrics.gender ?? 'other'
+          }, { emitEvent: false }); // avoid recomputing during patch
+          this.computeBMI();
+        }
       },
       error: (err) => {
         console.error('Error in metrics subscription:', err);

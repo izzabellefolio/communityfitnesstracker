@@ -18,96 +18,105 @@
         <!-- Dashboard for logged-in user -->
         <div class="row g-4 justify-content-center">
 
-         <div class="col-md-3">
-          <div class="dashboard-card card-today shadow-sm h-100 text-center p-4 rounded-4">
-            <i class="bi bi-clipboard-check display-4 text-success mb-3"></i>
+        <!-- Today's Routine (responsive columns) -->
+         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+          <div class="dashboard-card card-today shadow-sm h-100 text-center p-4 rounded-4 d-flex flex-column align-items-center" style="animation: fadeInUp 0.6s ease-out;">
+            <div class="mb-3" style="position: relative;">
+              <div style="width: 70px; height: 70px; background: rgba(16, 185, 129, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                <i class="bi bi-clipboard-check display-5 text-success" aria-hidden="true"></i>
+              </div>
+            </div>
             <h5 class="fw-bold mb-2">Today's Routine</h5>
 
             <ng-container *ngIf="todayRoutine; else noRoutine">
               <h6 class="mt-3 fw-semibold">{{ todayRoutine.name }}</h6>
-              <p class="text-muted small">
+              <p class="text-muted small" style="font-size: 0.85rem;">
                 {{ todayRoutine.exercises.length }} exercises · {{ todayRoutine.time }}
               </p>
-              <a routerLink="/routines/{{ todayRoutine.id }}" class="btn btn-success btn-sm mt-2">
+              <!-- fixed routerLink binding -->
+              <a [routerLink]="['/routines', todayRoutine.id]" class="btn btn-success btn-sm mt-auto" role="button" aria-label="View routine" style="width: 100%; margin-top: 1rem;">
                 View Routine
               </a>
             </ng-container>
 
             <ng-template #noRoutine>
-              <p class="text-muted small">No routine scheduled for today.</p>
-              <a routerLink="/routines" class="btn btn-outline-success btn-sm mt-2">
+              <p class="text-muted small" style="margin-top: 1rem;">No routine scheduled for today.</p>
+              <a [routerLink]="['/routines']" class="btn btn-outline-success btn-sm mt-auto" role="button" style="width: 100%; margin-top: 1rem;">
                 Browse Routines
               </a>
             </ng-template>
           </div>
         </div>
 
-
           <!-- Daily Challenge -->
-          <div class="col-md-3">
-            <div class="dashboard-card card-challenge shadow-sm h-100 text-center p-4 rounded-4 d-flex flex-column align-items-center">
-              <i class="bi bi-trophy display-4 text-warning mb-3"></i>
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="dashboard-card card-challenge shadow-sm h-100 text-center p-4 rounded-4 d-flex flex-column align-items-center" style="animation: fadeInUp 0.7s ease-out;">
+              <div class="mb-3" style="position: relative;">
+                <div style="width: 70px; height: 70px; background: rgba(245, 158, 11, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                  <i class="bi bi-trophy display-5 text-warning" aria-hidden="true"></i>
+                </div>
+              </div>
               <h5 class="fw-bold mb-2">Daily Challenge</h5>
 
               <ng-container *ngIf="dailyChallenge; else noChallenge">
                 <h6 class="mt-3">{{ dailyChallenge.title }}</h6>
-                <p class="text-muted small">{{ dailyChallenge.description }}</p>
-                <a routerLink="/challenges" class="btn btn-warning btn-sm mt-2">
+                <p class="text-muted small" style="font-size: 0.85rem;">{{ dailyChallenge.description }}</p>
+                <a [routerLink]="['/challenges']" class="btn btn-warning btn-sm mt-auto" role="button" style="width: 100%; margin-top: 1rem;">
                   Take Challenge
                 </a>
               </ng-container>
 
               <ng-template #noChallenge>
-                <p class="text-muted small">No challenge today. Check back tomorrow!</p>
-                <a routerLink="/challenges" class="btn btn-outline-warning btn-sm mt-2">
+                <p class="text-muted small" style="margin-top: 1rem;">No challenge today. Check back tomorrow!</p>
+                <a [routerLink]="['/challenges']" class="btn btn-outline-warning btn-sm mt-auto" role="button" style="width: 100%; margin-top: 1rem;">
                   Browse Challenges
                 </a>
               </ng-template>
             </div>
           </div>
 
-          <!-- User Metrics card (new) -->
-          <div class="col-md-3">
-            <div class="dashboard-card card-metrics shadow-sm h-100 text-center p-4 rounded-4 d-flex flex-column align-items-center">
-              <i class="bi bi-person-circle display-4 text-primary mb-3"></i>
+          <!-- User Metrics card -->
+          <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="dashboard-card card-metrics shadow-sm h-100 text-center p-4 rounded-4 d-flex flex-column align-items-center" style="animation: fadeInUp 0.8s ease-out;">
+              <div class="mb-3" style="position: relative;">
+                <div style="width: 70px; height: 70px; background: rgba(59, 130, 246, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                  <i class="bi bi-person-circle display-5 text-primary" aria-hidden="true"></i>
+                </div>
+              </div>
               <h5 class="fw-bold mb-2">Your Metrics</h5>
 
               <ng-container *ngIf="userService.userMetrics$ | async as userMetrics; else loadingMetrics">
 
-                <div class="mt-2">
-                  <div class="small text-muted">Weight</div>
-                  <div class="fw-semibold">{{ userMetrics.weight }} kg</div>
+                <div class="mt-3" style="width: 100%;">
+                  <div class="small text-muted" style="font-weight: 600;">Weight</div>
+                  <div class="fw-bold text-primary" style="font-size: 1.1rem;">{{ userMetrics.weight }} kg</div>
                 </div>
 
-                <div class="mt-2">
-                  <div class="small text-muted">Height</div>
-                  <div class="fw-semibold">{{ userMetrics.height }} cm</div>
+                <div class="mt-2" style="width: 100%;">
+                  <div class="small text-muted" style="font-weight: 600;">Height</div>
+                  <div class="fw-bold text-primary" style="font-size: 1.1rem;">{{ userMetrics.height }} cm</div>
                 </div>
 
-                <div class="mt-2">
-                  <div class="small text-muted">BMI</div>
-                  <div class="fw-semibold">{{ userMetrics.bmi }}</div>
+                <div class="mt-2" style="width: 100%;">
+                  <div class="small text-muted" style="font-weight: 600;">BMI</div>
+                  <div class="fw-bold text-primary" style="font-size: 1.1rem;">{{ userMetrics.bmi }}</div>
                 </div>
 
-                <div class="mt-2">
-                  <div class="small text-muted">Metabolism</div>
-                  <div class="fw-semibold text-capitalize">{{ userMetrics.metabolism }}</div>
+                <div class="mt-2" style="width: 100%;">
+                  <div class="small text-muted" style="font-weight: 600;">Metabolism</div>
+                  <div class="fw-bold text-capitalize text-primary" style="font-size: 1rem;">{{ userMetrics.metabolism }}</div>
                 </div>
 
-                <div class="mt-2">
-                  <div class="small text-muted">Gender</div>
-                  <div class="fw-semibold text-capitalize">{{ userMetrics.gender }}</div>
+                <div class="mt-2 mb-3" style="width: 100%;">
+                  <div class="small text-muted" style="font-weight: 600;">Gender</div>
+                  <div class="fw-bold text-capitalize text-primary" style="font-size: 1rem;">{{ userMetrics.gender }}</div>
                 </div>
-
-                <button type="button" class="btn btn-outline-custom btn-sm mt-2" (click)="openEditMetrics()">
-                  Edit Metrics
-                </button>
 
               </ng-container>
 
               <ng-template #loadingMetrics>
                 <div class="text-center py-3">
-                  <div class="spinner-border spinner-border-sm text-primary"></div>
+                  <div class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></div>
                   <div class="small text-muted mt-2">Loading metrics...</div>
                 </div>
               </ng-template>
@@ -117,20 +126,23 @@
 
         </div> <!-- /.row -->
 
-        <!-- Inline Edit Metrics Modal -->
-        <div *ngIf="editModalOpen">
-          <div class="modal fade show d-block" tabindex="-1" aria-modal="true" role="dialog" style="background: rgba(0,0,0,0.4);">
+        <!-- Inline Edit Metrics Modal (improved accessibility & submit) -->
+        <div *ngIf="editModalOpen" aria-live="polite">
+          <!-- optional backdrop for better contrast -->
+          <div class="modal-backdrop fade show position-fixed top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.45); z-index:1040;"></div>
+
+          <div class="modal d-block" tabindex="-1" aria-modal="true" role="dialog" aria-labelledby="editMetricsTitle" aria-describedby="editMetricsDesc" style="z-index:1050;">
             <div class="modal-dialog modal-sm modal-dialog-centered">
-              <div class="modal-content">
+              <div class="modal-content" id="editMetricsDialog">
                 <div class="modal-header">
-                  <h5 class="modal-title">Edit Metrics</h5>
+                  <h5 class="modal-title" id="editMetricsTitle">Edit Metrics</h5>
                   <button type="button" class="btn-close" aria-label="Close" (click)="closeEditMetrics()"></button>
                 </div>
                 <div class="modal-body">
                   <form [formGroup]="metricsForm" (ngSubmit)="saveMetrics()">
                     <div class="mb-3">
                       <label class="form-label small">Weight (kg)</label>
-                      <input type="number" formControlName="weight" class="form-control" />
+                      <input type="number" formControlName="weight" class="form-control" aria-label="Weight in kilograms" />
                       <div *ngIf="metricsForm.get('weight')?.touched && metricsForm.get('weight')?.invalid" class="text-danger small mt-1">
                         Enter a valid weight (20–500).
                       </div>
@@ -138,7 +150,7 @@
 
                     <div class="mb-3">
                       <label class="form-label small">Height (cm)</label>
-                      <input type="number" formControlName="height" class="form-control" />
+                      <input type="number" formControlName="height" class="form-control" aria-label="Height in centimeters" />
                       <div *ngIf="metricsForm.get('height')?.touched && metricsForm.get('height')?.invalid" class="text-danger small mt-1">
                         Enter a valid height (100–250).
                       </div>
@@ -146,7 +158,7 @@
 
                     <div class="mb-3">
                       <label class="form-label small">Metabolism</label>
-                      <select class="form-select" formControlName="metabolism">
+                      <select class="form-select" formControlName="metabolism" aria-label="Metabolism type">
                         <option value="slow">Slow</option>
                         <option value="medium">Medium</option>
                         <option value="fast">Fast</option>
@@ -155,14 +167,14 @@
 
                     <div class="mb-3">
                       <label class="form-label small">Gender</label>
-                      <select class="form-select" formControlName="gender">
+                      <select class="form-select" formControlName="gender" aria-label="Gender">
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="other">Other</option>
                       </select>
                     </div>
 
-                    <div *ngIf="bmi !== null" class="mb-2">
+                    <div *ngIf="bmi !== null" class="mb-2" id="editMetricsDesc">
                       <div class="small text-muted">BMI</div>
                       <div class="fw-semibold">{{ bmi }}</div>
                     </div>
@@ -171,13 +183,7 @@
 
                   </form>
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" (click)="closeEditMetrics()" [disabled]="saveLoading">Cancel</button>
-                  <button type="button" class="btn btn-primary" (click)="saveMetrics()" [disabled]="saveLoading">
-                    <span *ngIf="saveLoading" class="spinner-border spinner-border-sm me-2"></span>
-                    Save
-                  </button>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -305,18 +311,18 @@
           <p class="text-muted fs-5">Join thousands of people achieving their fitness goals</p>
         </div>
         <div class="row g-4">
-          <div class="col-md-4" *ngFor="let t of testimonials">
-            <div class="testimonial-card p-4 bg-white rounded-4 shadow-sm h-100">
-              <div class="testimonial-stars mb-3">
+          <div class="col-md-4" *ngFor="let t of testimonials; let i = index">
+            <div class="testimonial-card p-5 bg-white rounded-4 shadow-sm h-100" [style.animation]="'fadeInUp ' + (0.7 + i * 0.15) + 's ease-out'">
+              <div class="testimonial-stars mb-4">
                 <i class="bi bi-star-fill text-warning"></i>
                 <i class="bi bi-star-fill text-warning"></i>
                 <i class="bi bi-star-fill text-warning"></i>
                 <i class="bi bi-star-fill text-warning"></i>
                 <i class="bi bi-star-fill text-warning"></i>
               </div>
-              <p class="fst-italic text-muted mb-3">"{{ t.text }}"</p>
+              <p class="fst-italic text-muted mb-4">"{{ t.text }}"</p>
               <div class="testimonial-author">
-                <div class="author-avatar me-2">{{ t.name.charAt(0) }}</div>
+                <div class="author-avatar me-3">{{ t.name.charAt(0) }}</div>
                 <div>
                   <p class="fw-bold mb-0">{{ t.name }}</p>
                   <p class="small text-muted mb-0">Age {{ t.age }}</p>

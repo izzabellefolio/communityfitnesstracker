@@ -198,26 +198,25 @@ export class ProgressService {
   ): Promise<void> {
     console.log('saveUserMetricsV2 called for userId:', userId);
     
-    // Use a single document per user instead of collection
-    const userMetricsDoc = doc(this.firestore, `userMetrics/${userId}`);
+    // Save metrics directly to the user document
+    const userRef = doc(this.firestore, `users/${userId}`);
     
     const bmi = this.calculateBMI(metrics.weight, metrics.height);
     
     const metricsData = {
-      userId: userId,
       weight: metrics.weight,
       height: metrics.height,
       metabolism: metrics.metabolism,
-      gender: metrics.gender || 'other',
+      gender: metrics.gender,
       bmi: bmi,
-      lastUpdated: Timestamp.now()
+      lastMetricsUpdate: Timestamp.now()
     };
 
-    return setDoc(userMetricsDoc, metricsData, { merge: true })
+    return setDoc(userRef, metricsData, { merge: true })
       .then(() => {
         console.log('User metrics saved/updated successfully for:', userId);
         
-        // Update userStats
+        // Update userStats with current weight
         const statsRef = doc(this.firestore, `userStats/${userId}`);
         return setDoc(statsRef, {
           currentWeight: metrics.weight,

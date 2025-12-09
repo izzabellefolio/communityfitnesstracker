@@ -18,6 +18,7 @@ import {
 } from '@angular/fire/firestore';
 import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
 import { switchMap, map, catchError, takeUntil } from 'rxjs/operators';
+import { UserService } from './user.service';
 
 export interface AppUser {
   uid: string;
@@ -41,7 +42,8 @@ export class Auth implements OnDestroy {
   constructor(
     private auth: FirebaseAuth,
     private firestore: Firestore,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {
     authState(this.auth)
       .pipe(
@@ -67,7 +69,29 @@ export class Auth implements OnDestroy {
         }),
         takeUntil(this.destroy$)
       )
-      .subscribe(user => this._user.next(user));
+      .subscribe(user => {
+        this._user.next(user);
+        
+        // Sync user metrics to UserService when user is loaded
+        if (user && user.weight != null && user.height != null) {
+          this.userService.setMetrics({
+            userId: user.uid,
+            weight: user.weight ?? 75,
+            height: user.height ?? 170,
+            metabolism: user.metabolism ?? 'medium',
+            gender: (user.gender as 'male' | 'female' | 'other') ?? 'other',
+            bmi: this.calculateBMI(user.weight ?? 75, user.height ?? 170),
+            lastUpdated: new Date()
+          });
+        }
+      });
+  }
+
+  private calculateBMI(weight: number, height: number): number {
+    if (!weight || !height) return 0;
+    const h = height / 100;
+    const bmi = weight / (h * h);
+    return Number(bmi.toFixed(1));
   }
 
   get isAuthenticated$(): Observable<boolean> {
@@ -93,10 +117,6 @@ export class Auth implements OnDestroy {
         displayName: displayName ?? user.displayName ?? null,
         photoURL: user.photoURL ?? null,
         createdAt: serverTimestamp(),
-        gender: null,
-        weight: null,
-        height: null,
-        metabolism: null,
         points: 0,
         lastPointsUpdate: serverTimestamp()
       },

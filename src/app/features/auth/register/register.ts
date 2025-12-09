@@ -38,6 +38,7 @@ export class Register {
     weight: FormControl<number | null>;
     height: FormControl<number | null>;
     metabolism: FormControl<string | null>;
+    gender: FormControl<string | null>;
   }>;
 
   constructor(
@@ -78,6 +79,9 @@ export class Register {
         ]),
         metabolism: this.fb.control<string | null>('medium', [
           Validators.required
+        ]),
+        gender: this.fb.control<string | null>(null, [
+          Validators.required
         ])
       },
       { validators: this.passwordsMatch }
@@ -116,7 +120,7 @@ export class Register {
     this.loading = true;
     this.error = null;
 
-    const { displayName, email, password, weight, height, metabolism } =
+    const { displayName, email, password, weight, height, metabolism, gender } =
       this.registerForm.value;
 
     try {
@@ -133,9 +137,9 @@ export class Register {
         this.userBMI = bmi;
       }
 
-      // 3. Map metabolism value
-      const mappedMetabolism: 'slow' | 'medium' | 'fast' =
-        metabolism === 'low' ? 'slow' : metabolism === 'high' ? 'fast' : 'medium';
+      // 3. Use metabolism value directly (already in correct format from dropdown)
+      const mappedMetabolism: 'slow' | 'medium' | 'fast' = 
+        (metabolism as 'slow' | 'medium' | 'fast') || 'medium';
 
       console.log('Saving user metrics to Firestore...');
       
@@ -144,7 +148,7 @@ export class Register {
         weight: weight ?? 0,
         height: height ?? 0,
         metabolism: mappedMetabolism,
-        gender: 'other'
+        gender: (gender ?? 'other') as 'male' | 'female' | 'other'
       });
       console.log('Metrics saved to Firestore');
 
@@ -163,7 +167,7 @@ export class Register {
         height: height ?? 0,
         metabolism: mappedMetabolism,
         bmi,
-        gender: 'other',
+        gender: (gender ?? 'other') as 'male' | 'female' | 'other',
         lastUpdated: new Date()
       };
 

@@ -24,42 +24,51 @@ export const routes: Routes = [
   // Protected routes (require authentication)
   {
     path: 'routines',
-    component: RoutineList
+    component: RoutineList,
+    canActivate: [authGuard]
   },
   {
     path: 'routines/create',
-    component: RoutineCreate
+    component: RoutineCreate,
+    canActivate: [authGuard]
   },
   {
     path: 'routines/premade',
-    component: PremadeRoutines
+    component: PremadeRoutines,
+    canActivate: [authGuard]
   },
   {
     path: 'routines/:id',
-    component: RoutineDetail
+    component: RoutineDetail,
+    canActivate: [authGuard]
   },
   {
     path: 'progress',
-    component: ProgressDashboard
+    component: ProgressDashboard,
+    canActivate: [authGuard]
   },
 
   // Challenges (protected)
   {
     path: 'challenges',
-    component: ChallengeList
+    component: ChallengeList,
+    canActivate: [authGuard]
   },
   {
     path: 'challenges/history',
-    component: ChallengeList
+    component: ChallengeList,
+    canActivate: [authGuard]
   },
   {
     path: 'challenges/:id',
-    component: ChallengeList
+    component: ChallengeList,
+    canActivate: [authGuard]
   },
 
   {
     path: 'leaderboard',
-    component: LeaderboardComponent
+    component: LeaderboardComponent,
+    canActivate: [authGuard]
   },
 
   // Wildcard route
