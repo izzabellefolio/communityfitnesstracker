@@ -41,23 +41,56 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let log of workoutLogs">
-            <td>{{ log.date | date:'short' }}</td>
+          <tr *ngFor="let log of getPaginatedLogs()">
+            <td>{{ formatDate(log.date) }}</td>
             <td class="fw-semibold">{{ log.routineName }}</td>
-            <td>{{ log.exercises.length }}</td>
-            <td>{{ log.totalReps }}</td>
-            <td>{{ Math.round(log.caloriesBurned) }} cal</td>
-            <td>{{ log.duration }} min</td>
+          
+            <!-- Exercises: show count of exercises array -->
+            <td class="text-center">{{ log.exercises.length }}</td>
+
+            <!-- Total reps: show dash when null/undefined -->
+            <td class="text-center">{{ log.totalReps != null ? log.totalReps : '—' }}</td>
+
+            <!-- Calories: show dash when null/undefined -->
             <td class="text-center">
-              <button 
-                class="btn btn-sm btn-outline-primary rounded-pill px-3"
-                (click)="viewDetails(log)">
+              <ng-container *ngIf="log.caloriesBurned != null; else dashCal">
+                {{ Math.round(log.caloriesBurned) }} cal
+              </ng-container>
+              <ng-template #dashCal>—</ng-template>
+            </td>
+
+            <!-- Duration: use helper only when present -->
+            <td class="text-center">
+              <ng-container *ngIf="log.duration != null; else dashDur">
+                {{ getDurationText(log.duration) }}
+              </ng-container>
+              <ng-template #dashDur>—</ng-template>
+            </td>
+
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="viewDetails(log)">
                 View
               </button>
             </td>
           </tr>
         </tbody>
       </table>
+
+      <!-- Simple pager (previous / page X of Y / next) -->
+      <div class="d-flex justify-content-between align-items-center mt-2">
+        <div>
+          <button class="btn btn-sm btn-outline-secondary me-2" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+            Previous
+          </button>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="currentPage === getTotalPages()" (click)="changePage(currentPage + 1)">
+            Next
+          </button>
+        </div>
+
+        <div class="text-muted small">
+          Page {{ currentPage }} of {{ getTotalPages() }}
+        </div>
+      </div>
     </div>
 
   </div>
@@ -69,7 +102,7 @@
   *ngIf="selectedLog" 
   class="modal d-block fade show"
   tabindex="-1"
-  style="background: rgba(0,0,0,0.4)">
+  style="background: rgba(0,0,0,0.4);">
   
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content rounded-3 shadow">
@@ -80,13 +113,13 @@
       </div>
 
       <div class="modal-body">
-        <div class="mb-2"><strong>Date:</strong> {{ selectedLog.date | date:'full' }}</div>
-        <div class="mb-2"><strong>Duration:</strong> {{ selectedLog.duration }} minutes</div>
+        <div class="mb-2"><strong>Date:</strong> {{ formatDate(selectedLog.date) }}</div>
+        <div class="mb-2"><strong>Duration:</strong> {{ getDurationText(selectedLog.duration) }}</div>
         <div class="mb-2"><strong>Total Reps:</strong> {{ selectedLog.totalReps }}</div>
-        <div class="mb-3"><strong>Calories Burned:</strong> {{ Math.round(selectedLog.caloriesBurned) }} cal</div>
+        <div class="mb-3"><strong>Calories Burned:</strong> {{ selectedLog.caloriesBurned ? Math.round(selectedLog.caloriesBurned) + ' cal' : '—' }}</div>
 
         <h6 class="fw-semibold mb-2">Exercises</h6>
-        <ul class="list-group mb-3">
+        <ul class="list-group mb-3" *ngIf="selectedLog.exercises && selectedLog.exercises.length > 0">
           <li 
             *ngFor="let exercise of selectedLog.exercises"
             class="list-group-item d-flex justify-content-between align-items-start">
@@ -100,11 +133,18 @@
               </small>
             </div>
 
-            <span class="badge bg-secondary rounded-pill">
+            <span 
+              class="badge rounded-pill"
+              [style.background]="getIntensityColor(exercise.intensity)"
+              style="color: #fff;">
               {{ exercise.intensity }}
             </span>
           </li>
         </ul>
+
+        <div *ngIf="!selectedLog.exercises || selectedLog.exercises.length === 0" class="text-muted">
+          No exercises recorded
+        </div>
 
         <div *ngIf="selectedLog.notes">
           <strong>Notes:</strong>

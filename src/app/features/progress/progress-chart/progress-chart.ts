@@ -2,7 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
-import { ProgressService } from '../progress';
+import { ProgressService } from '../../../core/services/progress.service';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 

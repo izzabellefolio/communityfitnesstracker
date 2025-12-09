@@ -1,0 +1,196 @@
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* ===== HEADER CARD ===== */
+.header-card {
+  background: linear-gradient(135deg, #457B9D 0%, #2B7A78 100%) !important;
+  border: none !important;
+  color: white !important;
+  margin-bottom: 2rem !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 12px rgba(69, 123, 157, 0.2) !important;
+}
+
+.header-card .card-body {
+  color: white !important;
+}
+
+.header-card h2 {
+  color: white !important;
+  font-size: 1.8rem;
+  margin-top: 0.5rem !important;
+}
+
+.header-card small {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.header-card .back-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration-line: underline;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.header-card .back-link:hover {
+  color: white;
+  opacity: 0.8;
+}
+
+/* ===== CARD SECTION ===== */
+.card-section {
+  background: #ffffff !important;
+  border: 1px solid rgba(69, 123, 157, 0.12) !important;
+  box-shadow: 0 2px 8px rgba(69, 123, 157, 0.05) !important;
+  border-radius: 16px !important;
+  transition: all 0.3s ease;
+}
+
+.card-section:hover {
+  box-shadow: 0 6px 20px rgba(69, 123, 157, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-control,
+.form-select {
+  border: 1px solid rgba(69, 123, 157, 0.2) !important;
+  border-radius: 10px !important;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #457B9D !important;
+  box-shadow: 0 0 0 3px rgba(69, 123, 157, 0.1) !important;
+  outline: none;
+}
+
+.form-label {
+  color: #1B4C4A !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+  background: linear-gradient(to right, #457B9D, #5d9cc6) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, #3d6a8a, #4d8bb6) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(69, 123, 157, 0.2) !important;
+}
+
+.btn-outline-primary {
+  color: #457B9D !important;
+  border-color: #457B9D !important;
+  background: transparent !important;
+  font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+  background-color: rgba(69, 123, 157, 0.08) !important;
+  color: #3d6a8a !important;
+  border-color: #3d6a8a !important;
+}
+
+.btn-outline-danger {
+  color: #E63946 !important;
+  border-color: #E63946 !important;
+  font-weight: 600;
+}
+
+.btn-outline-danger:hover {
+  background-color: rgba(230, 57, 70, 0.08) !important;
+  color: #c6303d !important;
+  border-color: #c6303d !important;
+}
+
+/* ===== EXERCISE LIST ITEMS ===== */
+.list-group-item {
+  background: #f8f9fa !important;
+  border: 1px solid rgba(69, 123, 157, 0.1) !important;
+  border-radius: 10px !important;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+  background: #f0f7fa !important;
+  border-color: rgba(69, 123, 157, 0.2) !important;
+  box-shadow: 0 2px 8px rgba(69, 123, 157, 0.08);
+}
+
+.list-group-item strong {
+  color: #1B4C4A !important;
+}
+
+/* ===== BADGE STYLES ===== */
+.badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.bg-primary {
+  background: linear-gradient(to right, #457B9D, #5d9cc6) !important;
+  color: white !important;
+}
+
+.bg-info {
+  background: #2B7A78 !important;
+  color: white !important;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h5.fw-bold {
+  color: #1B4C4A !important;
+}
+
+hr {
+  border-top: 1px solid rgba(69, 123, 157, 0.1) !important;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(69, 123, 157, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(69, 123, 157, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(69, 123, 157, 0.5);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .header-card .card-body {
+    flex-direction: column !important;
+    text-align: center;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 16px; /* Prevents zoom on mobile */
+  }
+}

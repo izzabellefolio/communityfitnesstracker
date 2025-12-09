@@ -1,10 +1,23 @@
-// auth.ts (modular Firebase)
-import { Injectable } from '@angular/core';
+// auth.ts
+import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Auth as FirebaseAuth, authState, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, User } from '@angular/fire/auth';
-import { Firestore, doc, setDoc, docData } from '@angular/fire/firestore';
-import { Observable, of, BehaviorSubject } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import {
+  Auth as FirebaseAuth,
+  authState,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendPasswordResetEmail
+} from '@angular/fire/auth';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  docData,
+  serverTimestamp
+} from '@angular/fire/firestore';
+import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { switchMap, map, catchError, takeUntil } from 'rxjs/operators';
 
 export interface AppUser {
   uid: string;
@@ -12,87 +25,97 @@ export interface AppUser {
   displayName?: string | null;
   photoURL?: string | null;
   createdAt?: any;
+  gender?: 'male' | 'female' | 'other' | null;
+  weight?: number | null;
+  height?: number | null;
+  metabolism?: 'slow' | 'medium' | 'fast' | null;
 }
 
 @Injectable({ providedIn: 'root' })
-export class Auth {
+export class Auth implements OnDestroy {
+  private destroy$ = new Subject<void>();
+
   private _user = new BehaviorSubject<AppUser | null>(null);
-  user$ = this._user.asObservable();
+  readonly user$ = this._user.asObservable();
 
   constructor(
     private auth: FirebaseAuth,
     private firestore: Firestore,
     private router: Router
   ) {
-    // Listen to auth state
     authState(this.auth)
       .pipe(
         switchMap(user => {
-          if (!user) return of(null); // no user, return null
+          if (!user) return of(null);
 
           const userRef = doc(this.firestore, `users/${user.uid}`);
-          // Combine Auth data with Firestore docData
+
           return docData(userRef).pipe(
             map(doc => ({
               uid: user.uid,
               email: user.email,
-              displayName: doc?.['displayName'] || user.displayName || null,
-              photoURL: doc?.['photoURL'] || user.photoURL || null,
-              createdAt: doc?.['createdAt'] || new Date()
-            } as AppUser))
+              displayName: doc?.['displayName'] ?? user.displayName ?? null,
+              photoURL: doc?.['photoURL'] ?? user.photoURL ?? null,
+              createdAt: doc?.['createdAt'] ?? null,
+              gender: doc?.['gender'] ?? null,
+              weight: doc?.['weight'] ?? null,
+              height: doc?.['height'] ?? null,
+              metabolism: doc?.['metabolism'] ?? null
+            }) as AppUser),
+            catchError(() => of(null))
           );
-        })
+        }),
+        takeUntil(this.destroy$)
       )
-      .subscribe(this._user);
+      .subscribe(user => this._user.next(user));
   }
 
-  get isAuthenticated(): boolean {
-    return !!this.auth.currentUser;
+  get isAuthenticated$(): Observable<boolean> {
+    return this.user$.pipe(map(Boolean));
   }
 
   // Register user
   async register(email: string, password: string, displayName?: string) {
     const cred = await createUserWithEmailAndPassword(this.auth, email, password);
     const user = cred.user;
-    if (displayName) await updateProfile(user, { displayName });
 
-    const userDoc: AppUser = {
-      uid: user.uid,
-      email: user.email,
-      displayName: displayName || user.displayName || null,
-      photoURL: user.photoURL || null,
-      createdAt: new Date()
-    };
+    if (displayName) {
+      await updateProfile(user, { displayName });
+    }
 
     const userRef = doc(this.firestore, `users/${user.uid}`);
-    await setDoc(userRef, userDoc, { merge: true });
 
-    this._user.next(userDoc); // update BehaviorSubject immediately
-    return userDoc;
+    await setDoc(
+      userRef,
+      {
+        uid: user.uid,
+        email: user.email,
+        displayName: displayName ?? user.displayName ?? null,
+        photoURL: user.photoURL ?? null,
+        createdAt: serverTimestamp(),
+        gender: null,
+        weight: null,
+        height: null,
+        metabolism: null,
+        points: 0,
+        lastPointsUpdate: serverTimestamp()
+      },
+      { merge: true }
+    );
+
+    // ✅ DO NOT manually emit user
+    return user;
   }
 
   // Login
   async login(email: string, password: string) {
     const cred = await signInWithEmailAndPassword(this.auth, email, password);
-    const user = cred.user;
-
-    const userRef = doc(this.firestore, `users/${user.uid}`);
-    const userDoc: AppUser = {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || null,
-      photoURL: user.photoURL || null
-    };
-    await setDoc(userRef, userDoc, { merge: true });
-
-    this._user.next(userDoc); // update BehaviorSubject immediately
-    return user;
+    return cred.user;
   }
 
   // Logout
   async logout() {
     await this.auth.signOut();
-    this._user.next(null); // reset BehaviorSubject
     await this.router.navigate(['/login']);
   }
 
@@ -103,6 +126,11 @@ export class Auth {
 
   // Get ID token
   getIdToken(): Promise<string | null> {
-    return this.auth.currentUser?.getIdToken() || Promise.resolve(null);
+    return this.auth.currentUser?.getIdToken() ?? Promise.resolve(null);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

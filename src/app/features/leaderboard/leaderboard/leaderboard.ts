@@ -2,9 +2,9 @@ import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
-import { Leaderboard} from '../leaderboard';
+import { LeaderboardService } from '../../../core/services/leaderboard.service';
 import { LeaderboardEntry } from '../../../shared/models/leaderboard-entry.model';
-import { RoutineService } from '../../routine/routine';
+import { RoutineService } from '../../../core/services/routine.service';
 import { Routine } from '../../../shared/models';
 
 @Component({
@@ -15,7 +15,7 @@ import { Routine } from '../../../shared/models';
   styleUrls: ['./leaderboard.css'],
 })
 export class LeaderboardComponent implements OnInit {
-  private leaderboardService = inject(Leaderboard);
+  private leaderboardService = inject(LeaderboardService);
   private auth = inject(Auth);
   private routineService = inject(RoutineService);
 
@@ -23,7 +23,7 @@ export class LeaderboardComponent implements OnInit {
   topUsers: LeaderboardEntry[] = [];
   currentUserRank: number | null = null;
   currentUserId: string | null = null;
-  currentStreak: number = 0;
+  currentUserEntry: LeaderboardEntry | null = null;
   loading = true;
 
   // Pagination
@@ -43,9 +43,12 @@ export class LeaderboardComponent implements OnInit {
         this.topUsers = entries.slice(0, 10);
         this.totalPages = Math.ceil(entries.length / this.itemsPerPage);
         
-        // Find current user's rank
+        // Find current user's entry and rank
         const currentUser = entries.find(e => e.userId === this.currentUserId);
-        this.currentUserRank = currentUser?.rank || null;
+        if (currentUser) {
+          this.currentUserRank = currentUser.rank || null;
+          this.currentUserEntry = currentUser;
+        }
         
         this.loading = false;
         console.log('Leaderboard loaded:', entries);
@@ -115,26 +118,5 @@ export class LeaderboardComponent implements OnInit {
 
   isCurrentUser(userId: string): boolean {
     return userId === this.currentUserId;
-  }
-
-  
-
-  // Calculate streak based on completedDates
-  calculateStreak(routines: Routine[]): number {
-    const allCompleted: string[] = routines
-      .flatMap(r => r.completedDates || [])
-      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
-
-    let streak = 0;
-    const today = new Date();
-
-    for (const dateStr of allCompleted) {
-      const date = new Date(dateStr);
-      const diffDays = Math.floor((today.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-      if (diffDays === streak) streak++;
-      else if (diffDays > streak) break;
-    }
-
-    return streak;
   }
 }

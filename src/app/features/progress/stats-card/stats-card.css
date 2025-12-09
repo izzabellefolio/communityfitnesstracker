@@ -1,0 +1,9 @@
+.stats-card { display:flex; gap:12px; align-items:center; padding:10px; border-radius:8px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.icon-wrapper { width:48px; height:48px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; }
+.icon-wrapper i, .emoji { font-size:20px; }
+.stats-card-body { display:flex; flex-direction:column; }
+.stats-title { font-size:12px; color:#6b7280; }
+.stats-value { font-size:20px; font-weight:600; display:flex; align-items:baseline; gap:6px; }
+.unit { font-size:13px; color:#6b7280; }
+.stats-trend { display:flex; gap:8px; align-items:center; margin-top:6px; font-size:13px; color:#6b7280; }
+.spinner { font-style:italic; color:#9ca3af; }

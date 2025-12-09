@@ -1,10 +1,13 @@
 export interface Exercise {
+  id?: string;
   name: string;
-  type: string; // 'Strength', 'Cardio', 'Flexibility', 'Balance'
+  type: 'cardio' | 'strength' | 'flexibility' | 'balance';
   sets: number;
   reps: number;
   duration: number; // in minutes
-  intensity: 'Low' | 'Medium' | 'High';
-  caloriesPerRep?: number;
-  isCustom?: boolean; // indicates if the exercise is user-created
+  intensity: number; // 1-10
+  caloriesPerMinute: number;
+  isCustom?: boolean; // optional flag for user-added exercises
+  isTemplate?: boolean; // optional flag if needed
+  met?: number;  // Metabolic Equivalent of Task value
 }

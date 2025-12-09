@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { RoutineService } from '../routine';
+import { RoutineService } from '../../../core/services/routine.service';
 import { Routine, Exercise } from '../../../shared/models'; // Import from models
 
 @Component({
@@ -34,11 +34,12 @@ export class RoutineCreate {
   getEmptyExercise(): Exercise {
     return {
       name: '',
-      type: 'Strength',
+      type: 'strength',
       sets: 3,
       reps: 10,
       duration: 0,
-      intensity: 'Medium'
+      intensity: 0,
+      caloriesPerMinute: 0
     };
   }
 

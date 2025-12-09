@@ -1,0 +1,24 @@
+(/* Global loader overlay */)
+.global-loader-overlay {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255,255,255,0.6);
+	z-index: 1200;
+}
+.global-loader-overlay .spinner-border {
+	width: 3rem;
+	height: 3rem;
+}
+
+/* Make loader overlay non-blocking by default so stuck overlays don't block UI.
+   The spinner itself remains interactive so it's possible to click if needed. */
+.global-loader-overlay {
+	pointer-events: none;
+}
+.global-loader-overlay .spinner-border {
+	pointer-events: auto;
+}
+

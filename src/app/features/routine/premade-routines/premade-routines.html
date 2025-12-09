@@ -1,52 +1,76 @@
-<div class="container py-5" style="background: linear-gradient(135deg, #f0f4ff, #d9e6ff); min-height: 100vh;">
-  <h2 class="text-center mb-5 fw-bold" style="font-family: 'Poppins', sans-serif;">📋 Premade Routine Templates</h2>
+<div class="container mt-4">
+
+  <!-- HEADER -->
+  <div class="card shadow-lg border-0 mb-4 header-card">
+    <div class="card-body p-4 d-flex justify-content-between align-items-center">
+
+      <div>
+        <a routerLink="/routines" class="back-link">← Back</a>
+
+        <h2 class="fw-bold mt-2 mb-1">📋 Premade Templates</h2>
+
+        <small class="opacity-75">
+          Choose from our collection of ready-made routines
+        </small>
+      </div>
+
+    </div>
+  </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-3">Loading routines...</p>
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-3 text-muted">Loading routines...</p>
   </div>
 
-  <!-- Routine Cards -->
+  <!-- Empty State -->
+  <div *ngIf="!loading && premadeRoutines.length === 0" class="card card-section p-5 text-center">
+    <div class="empty-icon mb-3">📭</div>
+    <h4 class="fw-bold text-dark">No Routines Available</h4>
+    <p class="text-muted">Come back soon for new routine templates!</p>
+  </div>
+
+  <!-- Routine Cards Grid -->
   <div *ngIf="!loading && premadeRoutines.length > 0" class="row g-4">
     <div *ngFor="let routine of premadeRoutines" class="col-md-6 col-lg-4">
-      <div class="card shadow-lg h-100 rounded-4 border-0" style="animation: fadeInUp 0.5s ease-out;">
-        <div class="card-body">
-          <h5 class="card-title fw-bold">{{ routine.name }}</h5>
-          <p class="text-muted mb-2" *ngIf="routine.description">{{ routine.description }}</p>
+      <div class="card card-section fade-in h-100 d-flex flex-column">
+        <div class="card-body flex-grow-1">
+          <h5 class="card-title fw-bold mb-2">{{ routine.name }}</h5>
+          <p class="text-muted small mb-3" *ngIf="routine.description">{{ routine.description }}</p>
 
-          <small class="text-muted d-block mb-1">
-            <strong>Schedule:</strong> {{ routine.schedule.join(', ') }}
-          </small>
-          <small class="text-muted d-block mb-3">
-            <strong>Time:</strong> {{ routine.time }}
-          </small>
+          <div class="small mb-3">
+            <div class="mb-2">
+              <strong class="text-dark">📅 Schedule:</strong> 
+              <span class="text-muted">{{ routine.schedule.join(', ') }}</span>
+            </div>
+            <div>
+              <strong class="text-dark">⏱️ Time:</strong> 
+              <span class="text-muted">{{ routine.time }}</span>
+            </div>
+          </div>
+
+          <hr class="my-3">
 
           <div>
-            <strong>Exercises ({{ routine.exercises.length }}):</strong>
-            <ul class="small text-muted mb-0">
+            <strong class="text-dark">💪 Exercises ({{ routine.exercises.length }})</strong>
+            <ul class="small text-muted mb-0 ps-3">
               <li *ngFor="let ex of routine.exercises">
                 <span class="fw-semibold">{{ ex.name }}</span> - 
                 {{ ex.sets }}x{{ ex.reps || ex.duration + 'min' }} 
-                <span class="badge rounded-pill bg-secondary ms-1">{{ ex.type }}</span>
+                <span class="badge bg-primary ms-1" style="background: linear-gradient(to right, #457B9D, #5d9cc6) !important; font-size: 0.65rem;">{{ ex.type }}</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div class="card-footer bg-white border-0">
-          <button (click)="saveToMyRoutines(routine)" class="btn w-100 text-white fw-bold"
-                  style="background: linear-gradient(to right, #5a67d8, #7f9cf5); border-radius: 10px; transition: 0.3s;">
+        <div class="card-footer bg-white border-top p-3">
+          <button (click)="saveToMyRoutines(routine)" class="btn w-100 btn-primary text-white fw-semibold rounded-pill"
+                  style="background: linear-gradient(to right, #457B9D, #5d9cc6) !important;">
             Add to My Routines
           </button>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- No Routines -->
-  <div *ngIf="!loading && premadeRoutines.length === 0" class="text-center py-5">
-    <p class="text-muted">No premade routines available.</p>
   </div>
 </div>
 
@@ -57,25 +81,25 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.fade-in {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
 /* Card Hover */
-.card:hover {
-  transform: translateY(-5px);
-  transition: 0.3s;
+.card-section:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(69, 123, 157, 0.15) !important;
 }
 
-/* Button Hover */
-.btn:hover {
-  opacity: 0.9;
+/* Badge and Icon Styles */
+.empty-icon {
+  font-size: 60px;
+  opacity: 0.8;
 }
 
-/* Smooth Font */
-.card, .card-body, h2, p, small {
-  font-family: 'Poppins', sans-serif;
-}
-
-/* Exercise Badge */
 .badge {
   font-size: 0.65rem;
   vertical-align: middle;
+  font-weight: 600;
 }
 </style>

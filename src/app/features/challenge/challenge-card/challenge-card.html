@@ -1,40 +1,48 @@
-<div class="card h-100 shadow-sm" [class.border-success]="isCompleted">
-  <div class="card-body">
-    <!-- Header with Icon and Type -->
-    <div class="d-flex justify-content-between align-items-start mb-2">
-      <span class="fs-2">{{ getCategoryIcon() }}</span>
-      <span class="badge" [class]="'bg-' + getDifficultyColor()">
-        {{ challenge.difficulty | titlecase }}
-      </span>
+<div class="challenge-card h-100 shadow-sm" [class.completed]="isCompleted" [class.difficulty-easy]="challenge.difficulty === 'Easy'" [class.difficulty-medium]="challenge.difficulty === 'Medium'" [class.difficulty-hard]="challenge.difficulty === 'Hard'">
+  <div class="challenge-card-inner">
+    <div class="challenge-icon-container">
+      <div class="icon-background">
+        <span class="challenge-icon">{{ getCategoryIcon() }}</span>
+      </div>
+      <div class="difficulty-badge {{ challenge.difficulty.toLowerCase() }} ms-3">{{ challenge.difficulty | titlecase }}</div>
     </div>
 
-    <!-- Challenge Title -->
-    <h5 class="card-title">{{ challenge.title }}</h5>
-    
-    <!-- Description -->
-    <p class="card-text text-muted">{{ challenge.description }}</p>
+    <h3 class="challenge-title">{{ challenge.title }}</h3>
 
-    <!-- Footer with Points and Difficulty -->
-    <div class="d-flex justify-content-between align-items-center mt-3">
-      <div>
-        <span class="badge bg-dark">{{ challenge.points }} pts</span>
-        <span class="badge ms-1" [class]="'bg-' + getDifficultyColor()">
-          {{ challenge.difficulty }}
-        </span>
+    <p class="challenge-description">{{ challenge.description }}</p>
+
+    <div class="challenge-info">
+      <div class="points-container">
+        <div class="points-label">Points</div>
+        <div class="points-value">
+          <span class="points-number">{{ challenge.points }}</span>
+          <span class="points-text">pts</span>
+        </div>
       </div>
 
-      <!-- Complete Button -->
-      <button 
-        *ngIf="showCompleteButton && !isCompleted"
-        class="btn btn-sm btn-success"
-        (click)="onComplete()">
-        Complete
+      <div class="difficulty-indicator">
+        <div class="difficulty-label">Difficulty</div>
+        <div class="difficulty-dots">
+          <div class="dot" [class.active]="challenge.difficulty === 'Easy'"></div>
+          <div class="dot" [class.active]="challenge.difficulty === 'Medium'"></div>
+          <div class="dot" [class.active]="challenge.difficulty === 'Hard'"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="challenge-action">
+      <button *ngIf="showCompleteButton && !isCompleted" class="complete-btn" (click)="onComplete()">
+        <span class="btn-icon">✔</span>
+        <span class="btn-text">Complete</span>
       </button>
 
-      <!-- Completed Badge -->
-      <span *ngIf="isCompleted" class="badge bg-success">
-        Completed
-      </span>
+      <div *ngIf="isCompleted" class="completed-state">
+        <span class="completed-icon">🏁</span>
+        <div>
+          <div class="completed-text">Completed</div>
+          <div class="completed-points">+{{ challenge.points }}</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

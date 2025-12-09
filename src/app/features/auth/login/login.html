@@ -1,13 +1,13 @@
-<div class="container d-flex justify-content-center align-items-center min-vh-100" style="background: linear-gradient(135deg, #f0f4ff, #d9e6ff);">
+<div class="container d-flex justify-content-center align-items-center min-vh-100" style="background-color: #f8fafc;">
   <div class="card shadow-lg p-4" style="max-width: 420px; width: 100%; border-radius: 15px; animation: fadeInUp 0.5s ease-out;">
 
     <!-- Heading -->
     <h2 class="text-center mb-4 fw-bold" style="font-family: 'Poppins', sans-serif;">Login</h2>
 
-    <!-- Error Alert -->
-    <div *ngIf="error" class="alert alert-danger d-flex align-items-center py-2">
+    <!-- Error Alert 
+    <div [hidden]="!error" class="alert alert-danger d-flex align-items-center py-2">
       <i class="fa fa-exclamation-circle me-2"></i> {{ error }}
-    </div>
+    </div>-->
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
@@ -24,10 +24,10 @@
             [class.is-invalid]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
           >
         </div>
-        <div class="invalid-feedback" *ngIf="loginForm.get('email')?.errors?.['required']">
+        <div class="invalid-feedback" [hidden]="!(loginForm.get('email')?.errors?.['required'])">
           Email is required
         </div>
-        <div class="invalid-feedback" *ngIf="loginForm.get('email')?.errors?.['email']">
+        <div class="invalid-feedback" [hidden]="!(loginForm.get('email')?.errors?.['email'])">
           Enter a valid email
         </div>
       </div>
@@ -48,10 +48,10 @@
             <i class="fa" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
           </button>
         </div>
-        <div class="invalid-feedback" *ngIf="loginForm.get('password')?.errors?.['required']">
+        <div class="invalid-feedback" [hidden]="!(loginForm.get('password')?.errors?.['required'])">
           Password is required
         </div>
-        <div class="invalid-feedback" *ngIf="loginForm.get('password')?.errors?.['minlength']">
+        <div class="invalid-feedback" [hidden]="!(loginForm.get('password')?.errors?.['minlength'])">
           Minimum 6 characters required
         </div>
       </div>
@@ -64,12 +64,12 @@
       <!-- Submit Button -->
       <button 
         class="btn w-100 text-white fw-bold" 
-        style="background: linear-gradient(to right, #5a67d8, #7f9cf5); border-radius: 10px; transition: 0.3s;" 
+        style="background: linear-gradient(to right, #5aaad8, #7fcaf5); border-radius: 10px; transition: 0.3s;" 
         type="submit"
         [disabled]="loading || loginForm.invalid"
       >
-        <span *ngIf="!loading">Login</span>
-        <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+        <span [hidden]="loading">Login</span>
+        <span [hidden]="!loading" class="spinner-border spinner-border-sm"></span>
       </button>
 
     </form>

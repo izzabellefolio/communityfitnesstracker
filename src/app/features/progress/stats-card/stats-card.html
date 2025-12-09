@@ -1,10 +1,35 @@
 <div class="card shadow-sm h-100" [style.background]="gradient">
-      <div class="card-body text-white">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h6 class="mb-0">{{ title }}</h6>
-          <span class="fs-3">{{ icon }}</span>
+  <div class="card-body text-white">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h6 class="mb-0">{{ title }}</h6>
+
+      <div class="d-flex align-items-center">
+        <div
+          class="icon-wrapper d-flex align-items-center justify-content-center me-2"
+          [style.background]="getIconColor()"
+          style="width:40px; height:40px; border-radius:8px; color:#fff;"
+        >
+          <ng-container *ngIf="isIconClass(); else emojiIcon">
+            <i [class]="icon"></i>
+          </ng-container>
+          <ng-template #emojiIcon>
+            <span class="fs-3">{{ icon }}</span>
+          </ng-template>
         </div>
-        <h2 class="mb-0 fw-bold">{{ value }}</h2>
-        <small *ngIf="subtitle" class="opacity-75">{{ subtitle }}</small>
       </div>
     </div>
+
+    <h2 class="mb-0 fw-bold">
+      <ng-container *ngIf="!isLoading; else loadingTpl">
+        {{ value }}
+        <small *ngIf="unit" class="ms-2 fw-normal">{{ unit }}</small>
+      </ng-container>
+    </h2>
+
+    <ng-template #loadingTpl>
+      <div class="text-white-50">Loading…</div>
+    </ng-template>
+
+    <small *ngIf="subtitle" class="opacity-75 d-block mt-1">{{ subtitle }}</small>
+  </div>
+</div>

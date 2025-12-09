@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { PremadeRoutineService } from './premade-routine.service';
-import { RoutineService } from '../routine';
+import { PremadeRoutineService } from '../../../core/services/premade-routine.service';
+import { RoutineService } from '../../../core/services/routine.service';
 import { Routine } from '../../../shared/models/routine.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';

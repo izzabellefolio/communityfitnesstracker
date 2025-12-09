@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PremadeRoutineService } from './premade-routine.service';
+import { PremadeRoutineService } from '../../../core/services/premade-routine.service';
 
 describe('PremadeRoutineService', () => {
   let service: PremadeRoutineService;

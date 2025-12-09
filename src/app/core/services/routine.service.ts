@@ -48,6 +48,7 @@ export class RoutineService {
       return () => unsubscribeAuth();
     });
   }
+  
 
   // ==============================
   // Get a routine by ID (real-time)
@@ -56,6 +57,22 @@ export class RoutineService {
     const routineDoc = doc(this.firestore, 'routines', id);
     return docData(routineDoc, { idField: 'id' }).pipe(
       map(data => data ? (data as Routine) : null)
+    );
+  }
+  getTodayRoutine(userId: string): Observable<Routine[]> {
+    const today = new Date().toLocaleString('en-us', { weekday: 'long' }).toLowerCase() as
+      | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+
+    const routinesRef = collection(this.firestore, 'routines');
+    const q = query(routinesRef, where('userId', '==', userId));
+
+    return (collectionData(q, { idField: 'id' }) as Observable<Routine[]>).pipe(
+      map((arr: Routine[]) => arr.filter(routine =>
+        // schedule items may be strings (e.g. 'monday') or objects ({ day: 'monday', time: '09:00' })
+        (routine.schedule as any[])?.some((s: any) =>
+          typeof s === 'string' ? s.toLowerCase() === today : (s?.day ?? '').toLowerCase() === today
+        )
+      ))
     );
   }
 

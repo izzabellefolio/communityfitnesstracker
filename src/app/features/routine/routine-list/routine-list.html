@@ -1,108 +1,118 @@
-<div 
-  class="page-wrapper d-flex justify-content-center align-items-start py-5"
-  style="background: linear-gradient(135deg, #f0f4ff, #d9e6ff); min-height: 100vh;"
->
-  <div 
-    class="card shadow-lg p-4 w-100"
-    style="max-width: 900px; border-radius: 15px; animation: fadeInUp 0.5s ease-out;"
-  >
-    
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="fw-bold" style="font-family: 'Poppins', sans-serif; color: #2a2a44;">
-        My Routines
-      </h2>
-      <div>
-        <a 
-          routerLink="/routines/premade" 
-          class="btn btn-outline-primary me-2 soft-btn"
-        >
-          Premade
-        </a>
-        <a 
-          routerLink="/routines/create" 
-          class="btn btn-primary text-white soft-btn"
-          style="background: linear-gradient(to right, #5a67d8, #7f9cf5);"
-        >
-          New Routine
-        </a>
+<div class="container mt-4">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-3 text-muted">Loading your routines...</p>
+  </div>
+
+  <!-- ROUTINE LIST -->
+  <div *ngIf="!loading" class="fade-in">
+
+    <!-- HEADER -->
+    <div class="card shadow-lg border-0 mb-4 header-card">
+      <div class="card-body p-4 d-flex justify-content-between align-items-center">
+
+        <div class="d-flex flex-column">
+          <h2 class="fw-bold mb-1">My Routines</h2>
+          <small class="opacity-75">Manage your custom routines</small>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <a 
+            routerLink="/routines/premade" 
+            class="btn btn-primary text-dark fw-semibold rounded-pill px-4 shadow-sm"
+          >
+            Premade
+          </a>
+          <a 
+            routerLink="/routines/create" 
+            class="btn btn-primary text-white fw-semibold rounded-pill px-4 shadow-sm"
+          >
+            New Routine
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Loading -->
-    <div *ngIf="loading" class="text-center py-5">
-      <div class="spinner-border text-primary"></div>
-      <p class="mt-3 text-muted">Loading your routines...</p>
-    </div>
-
     <!-- Empty -->
-    <div *ngIf="!loading && routines.length === 0" class="text-center py-5">
+    <div *ngIf="routines.length === 0" class="text-center py-5">
       <div class="empty-icon mb-3">💪</div>
       <h4 class="fw-bold">No Routines Yet</h4>
       <p class="text-muted">Create one or browse premade templates.</p>
 
       <a 
         routerLink="/routines/create" 
-        class="btn btn-primary me-2 soft-btn text-white"
-        style="background: linear-gradient(to right, #5a67d8, #7f9cf5);"
+        class="btn btn-primary me-2 text-white fw-semibold rounded-pill px-4"
       >
         Create Routine
       </a>
 
       <a 
         routerLink="/routines/premade" 
-        class="btn btn-outline-primary soft-btn"
+        class="btn btn-outline-primary text-dark fw-semibold rounded-pill px-4"
       >
         Browse Routines
       </a>
     </div>
 
-    <!-- Grid -->
-    <div *ngIf="!loading && routines.length > 0" class="row">
-      <div *ngFor="let routine of routines" class="col-md-6 mb-4">
-        <div class="routine-card shadow-sm p-3 h-100">
+    <!-- ROUTINES GRID -->
+    <div *ngIf="routines.length > 0" class="row g-4">
+      <div *ngFor="let routine of routines" class="col-sm-6 col-md-4 col-lg-4">
+        <div class="card card-section fade-in h-100 d-flex flex-column">
 
-          <h5 class="fw-bold">{{ routine.name }}</h5>
-          <p class="text-muted small" *ngIf="routine.description">
-            {{ routine.description }}
-          </p>
+          <div class="card-body flex-grow-1">
+            <h5 class="card-title fw-bold mb-2">{{ routine.name }}</h5>
+            <p class="text-muted small mb-3" *ngIf="routine.description">
+              {{ routine.description }}
+            </p>
 
-          <div class="small mb-2">
-            <strong>Schedule:</strong> {{ routine.schedule.join(', ') }}
+            <div class="small mb-3">
+              <div class="mb-2">
+                <strong class="text-dark">📅 Schedule:</strong>
+                <span class="text-muted d-block">{{ routine.schedule.join(', ') }}</span>
+              </div>
+              <div>
+                <strong class="text-dark">⏱️ Time:</strong>
+                <span class="text-muted d-block">{{ routine.time }}</span>
+              </div>
+            </div>
+
+            <hr class="my-3">
+
+            <!-- Exercise Preview -->
+            <div class="small mb-3">
+              <strong class="text-dark">💪 Exercises ({{ routine.exercises.length }})</strong>
+              <ul class="ps-3 mb-0 small text-muted">
+                <li *ngFor="let exercise of routine.exercises.slice(0, 3)">
+                  <span class="fw-semibold">{{ exercise.name }}</span> - {{ exercise.sets }}x{{ exercise.reps || exercise.duration + 'min' }}
+                </li>
+              </ul>
+
+              <small *ngIf="routine.exercises.length > 3" class="text-muted">
+                + {{ routine.exercises.length - 3 }} more
+              </small>
+            </div>
           </div>
-          <div class="small text-muted mb-2">
-            <strong>Time:</strong> {{ routine.time }}
-          </div>
 
-          <!-- Exercise Preview -->
-          <div class="small text-muted">
-            <strong>Exercises ({{ routine.exercises.length }})</strong>
-            <ul class="ps-3 mb-0 small">
-              <li *ngFor="let exercise of routine.exercises.slice(0, 3)">
-                {{ exercise.name }} - {{ exercise.sets }}x{{ exercise.reps || exercise.duration + 'min' }}
-              </li>
-            </ul>
+          <div class="card-footer bg-white border-top p-3">
+            <!-- Actions -->
+            <div class="d-flex gap-2">
+              <a 
+                [routerLink]="['/routines', routine.id]" 
+                class="btn btn-outline-primary btn-sm text-dark fw-semibold flex-grow-1 rounded-pill"
+              >
+                View
+              </a>
 
-            <small *ngIf="routine.exercises.length > 3" class="text-muted">
-              + {{ routine.exercises.length - 3 }} more
-            </small>
-          </div>
-
-          <!-- Actions -->
-          <div class="d-flex justify-content-between mt-3">
-            <a 
-              [routerLink]="['/routines', routine.id]" 
-              class="btn btn-outline-primary btn-sm soft-btn"
-            >
-              View
-            </a>
-
-            <button 
-              class="btn btn-outline-danger btn-sm soft-btn"
-              (click)="deleteRoutine(routine.id!)"
-            >
-              Delete
-            </button>
+              <button 
+                class="btn btn-outline-danger btn-sm fw-semibold flex-grow-1 rounded-pill"
+                (click)="deleteRoutine(routine.id!)"
+              >
+                <span *ngIf="deletingId === routine.id" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Delete
+              </button>
+            </div>
           </div>
 
         </div>
@@ -111,39 +121,3 @@
 
   </div>
 </div>
-
-<style>
-/* Matches login animation */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Soft Card */
-.routine-card {
-  background: #ffffff;
-  border-radius: 12px;
-  transition: 0.3s;
-}
-.routine-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(90, 103, 216, 0.15);
-}
-
-/* Buttons */
-.soft-btn {
-  border-radius: 10px !important;
-  padding: 6px 14px !important;
-  font-weight: 500;
-  transition: 0.25s;
-}
-.soft-btn:hover {
-  opacity: 0.9;
-}
-
-/* Empty emoji */
-.empty-icon {
-  font-size: 50px;
-  opacity: 0.5;
-}
-</style>

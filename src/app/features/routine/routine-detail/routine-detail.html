@@ -24,17 +24,10 @@
         </div>
 
         <div class="d-flex align-items-center gap-2">
-
-          <button class="btn btn-outline-light rounded-pill px-3"
-                  (click)="deleteRoutine()">
-            {{ isPremade ? 'Remove' : 'Delete' }}
-          </button>
-
           <button class="btn btn-light text-dark fw-semibold rounded-pill px-4 shadow-sm"
                   (click)="startWorkout()">
             Start
           </button>
-
         </div>
 
       </div>
@@ -58,68 +51,70 @@
     </div>
 
     <!-- EXERCISES -->
-    <div class="card shadow-sm border-0 rounded-4 mb-4 fade-in">
+    <div class="card card-section shadow-sm border-0 rounded-4 mb-4 fade-in">
       <div class="card-header bg-white border-0 p-4">
-        <h5 class="fw-bold mb-0">Exercises</h5>
+        <h5 class="fw-bold mb-0">💪 Exercises</h5>
       </div>
 
       <div class="card-body p-0">
 
         <div class="list-group list-group-flush">
-  <div *ngFor="let exercise of routine.exercises; let i = index" class="list-group-item exercise-item fade-in">
+          <div *ngFor="let exercise of routine.exercises; let i = index" class="list-group-item exercise-item fade-in">
 
-    <!-- Display mode -->
-<div *ngIf="editingExerciseIndex !== i" class="d-flex justify-content-between align-items-center">
-  <div>
-    <h6 class="fw-bold mb-1">{{ exercise.name }}</h6>
-    <div class="small text-muted">
-      {{ exercise.type }} • {{ exercise.sets }} sets
-      <span *ngIf="exercise.reps">• {{ exercise.reps }} reps</span>
-      <span *ngIf="exercise.duration">• {{ exercise.duration }} min</span>
-    </div>
-  </div>
+            <!-- Display mode -->
+            <div *ngIf="editingExerciseIndex !== i" class="d-flex justify-content-between align-items-center">
+              <div class="flex-grow-1">
+                <h6 class="fw-bold mb-1">
+                  {{ exercise.name }}
+                  <span *ngIf="completedExerciseIndices.has(i)" class="badge bg-success ms-2" style="background: linear-gradient(to right, #2B7A78, #457B9D) !important;">Completed</span>
+                </h6>
+                <div class="small text-muted">
+                  <span class="badge bg-light text-dark me-2">{{ exercise.type }}</span>
+                  <span>{{ exercise.sets }} sets</span>
+                  <span *ngIf="exercise.reps" class="ms-2">• {{ exercise.reps }} reps</span>
+                  <span *ngIf="exercise.duration" class="ms-2">• {{ exercise.duration }} min</span>
+                </div>
+              </div>
 
-  <div class="d-flex align-items-center gap-2">
-    <span class="badge intensity-badge px-3 py-2"
-      [ngClass]="{
-        'bg-success': exercise.intensity === 'Low',
-        'bg-warning': exercise.intensity === 'Medium',
-        'bg-danger': exercise.intensity === 'High'
-      }">
-      {{ exercise.intensity }}
-    </span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge intensity-badge px-3 py-2"
+                  [ngClass]="{
+                    'bg-success': (exercise.intensity + '') === 'Low',
+                    'bg-warning': (exercise.intensity + '') === 'Medium',
+                    'bg-danger': (exercise.intensity + '') === 'High'
+                  }">
+                  {{ exercise.intensity }}
+                </span>
 
-    <!-- Only show edit/delete for custom exercises -->
-    <ng-container *ngIf="exercise.isCustom">
-      <button class="btn btn-sm btn-outline-primary" (click)="editExercise(i)">Edit</button>
-      <button class="btn btn-sm btn-outline-danger" (click)="deleteExercise(i)">Delete</button>
-    </ng-container>
-  </div>
-</div>
+                <!-- Only show edit/delete for custom exercises -->
+                <ng-container *ngIf="exercise.isCustom">
+                  <button class="btn btn-sm btn-outline-primary fw-semibold rounded-pill" (click)="editExercise(i)">Edit</button>
+                  <button class="btn btn-sm btn-outline-danger fw-semibold rounded-pill" (click)="deleteExercise(i)">Delete</button>
+                </ng-container>
+              </div>
+            </div>
 
+            <!-- Edit mode -->
+            <div *ngIf="editingExerciseIndex === i" class="edit-exercise-form">
+              <input [(ngModel)]="exerciseToAdd.name" placeholder="Name" class="form-control mb-1">
+              <input [(ngModel)]="exerciseToAdd.type" placeholder="Type" class="form-control mb-1">
+              <input type="number" [(ngModel)]="exerciseToAdd.sets" placeholder="Sets" class="form-control mb-1">
+              <input type="number" [(ngModel)]="exerciseToAdd.reps" placeholder="Reps" class="form-control mb-1">
+              <input type="number" [(ngModel)]="exerciseToAdd.duration" placeholder="Duration (min)" class="form-control mb-1">
+              <select [(ngModel)]="exerciseToAdd.intensity" class="form-select mb-1">
+                <option>Low</option>
+                <option>Medium</option>
+                <option>High</option>
+              </select>
 
-    <!-- Edit mode -->
-    <div *ngIf="editingExerciseIndex === i" class="edit-exercise-form">
-      <input [(ngModel)]="exerciseToAdd.name" placeholder="Name" class="form-control mb-1">
-      <input [(ngModel)]="exerciseToAdd.type" placeholder="Type" class="form-control mb-1">
-      <input type="number" [(ngModel)]="exerciseToAdd.sets" placeholder="Sets" class="form-control mb-1">
-      <input type="number" [(ngModel)]="exerciseToAdd.reps" placeholder="Reps" class="form-control mb-1">
-      <input type="number" [(ngModel)]="exerciseToAdd.duration" placeholder="Duration (min)" class="form-control mb-1">
-      <select [(ngModel)]="exerciseToAdd.intensity" class="form-select mb-1">
-        <option>Low</option>
-        <option>Medium</option>
-        <option>High</option>
-      </select>
+              <div class="mt-2">
+                <button class="btn btn-success btn-sm me-2" (click)="saveExercise()">Save</button>
+                <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
+              </div>
+            </div>
 
-      <div class="mt-2">
-        <button class="btn btn-success btn-sm me-2" (click)="saveExercise()">Save</button>
-        <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
+          </div>
+        </div>
 
       </div>
     </div>
@@ -133,6 +128,15 @@
         New
       </button>
     </div>
+
+    <!-- DELETE ROUTINE BUTTON (MOVED TO BOTTOM) -->
+    <div class="text-center mt-3 mb-5 fade-in">
+      <button class="btn btn-danger rounded-pill px-4"
+              (click)="confirmDeleteRoutine()">
+        {{ isPremade ? 'Remove Routine' : 'Delete Routine' }}
+      </button>
+    </div>
+
   </div>
 
   <!-- WORKOUT MODE -->
@@ -150,10 +154,15 @@
       </p>
 
       <div class="timer-display text-center fw-bold my-4">
-        {{ formatTime(exerciseTimer) }}
+        <!-- show countdown or "00:00" when finished; for no-duration show label -->
+        <ng-container *ngIf="exerciseTimeRequiredSeconds > 0; else noTimer">
+          {{ formatTime(getRemainingTime()) }}
+        </ng-container>
+        <ng-template #noTimer>
+          <span class="text-muted">No timer for this exercise</span>
+        </ng-template>
       </div>
 
-      <!-- CONTROLS -->
       <div class="d-flex justify-content-center gap-3 my-3">
         <button class="btn btn-light rounded-pill px-4 shadow-sm"
                 (click)="previousExercise()"
@@ -167,7 +176,7 @@
           Pause
         </button>
 
-        <button *ngIf="!isTimerRunning"
+        <button *ngIf="!isTimerRunning && exerciseTimeRequiredSeconds > 0 && exerciseRemainingSeconds > 0"
                 class="btn btn-success rounded-pill px-4"
                 (click)="resumeTimer()">
           Resume
@@ -175,27 +184,38 @@
 
         <button class="btn btn-light rounded-pill px-4 shadow-sm"
                 (click)="nextExercise()"
-                [disabled]="currentExerciseIndex === routine!.exercises.length - 1">
+                [disabled]="currentExerciseIndex === routine!.exercises.length - 1 || (!isCurrentExerciseComplete() && exerciseTimeRequiredSeconds > 0)">
           Next
         </button>
       </div>
 
-      <!-- PROGRESS -->
       <div class="progress mt-4" style="height: 12px;">
         <div class="progress-bar progress-purple"
              role="progressbar"
              [style.width.%]="getProgressPercentage()"></div>
       </div>
 
-      <!-- ACTIONS -->
       <div class="d-flex justify-content-between mt-4">
         <button class="btn btn-outline-danger rounded-pill px-4" (click)="cancelWorkout()">
           Cancel
         </button>
 
-        <button class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="completeWorkout()">
-          Complete
-        </button>
+        <div class="d-flex flex-column align-items-center">
+          <button class="btn btn-primary rounded-pill px-4 shadow-sm"
+                  (click)="completeWorkout()"
+                  [disabled]="completedExerciseIndices.size !== routine!.exercises.length">
+            Complete
+          </button>
+          <small *ngIf="completedExerciseIndices.size !== routine!.exercises.length && exerciseTimeRequiredSeconds > 0" class="text-muted mt-2">
+            {{ formatTime(getRemainingTime()) }} remaining
+          </small>
+          <small *ngIf="exerciseTimeRequiredSeconds === 0 && currentExerciseIndex !== routine!.exercises.length - 1" class="text-muted mt-2">
+            Move to next exercise
+          </small>
+          <small *ngIf="completedExerciseIndices.size === routine!.exercises.length" class="text-success mt-2">
+            Ready to complete!
+          </small>
+        </div>
       </div>
 
     </div>

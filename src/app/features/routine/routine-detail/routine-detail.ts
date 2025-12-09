@@ -5,8 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { Firestore, doc, updateDoc, arrayUnion } from '@angular/fire/firestore';
 import { firstValueFrom } from 'rxjs';
 
-import { RoutineService } from '../routine';
-import { ProgressService } from '../../progress/progress'; // ← Correct import name
+import { RoutineService } from '../../../core/services/routine.service';
+import { ProgressService } from '../../../core/services/progress.service';
 import { Routine } from '../../../shared/models/routine.model';
 
 @Component({
@@ -32,9 +32,22 @@ export class RoutineDetail implements OnInit, OnDestroy {
   exerciseToAdd: any = null;
 
   // Timer
-  exerciseTimer = 0;
+  // total elapsed seconds for the whole workout (kept for analytics if needed)
+  totalElapsedSeconds = 0;
+
+  // Interval + running flag
   timerInterval: any = null;
   isTimerRunning = false;
+
+  // Per-exercise timing
+  exerciseTimeRequiredSeconds = 0; // static required seconds for current exercise (duration * 60)
+  exerciseRemainingSeconds = 0;    // countdown seconds for the current exercise
+
+  // indices of exercises that have been completed (by duration)
+  completedExerciseIndices = new Set<number>();
+
+  // optional routine-level total required seconds (if a routine-level duration is provided)
+  routineTotalRequiredSeconds = 0;
 
   isPremade = false;
 
@@ -55,7 +68,6 @@ export class RoutineDetail implements OnInit, OnDestroy {
     this.routineService.getRoutineById(id).subscribe({
       next: (routine) => {
         if (!routine) {
-          alert('Routine not found');
           this.router.navigate(['/routines']);
           return;
         }
@@ -78,16 +90,34 @@ export class RoutineDetail implements OnInit, OnDestroy {
     if (!this.routine) return;
     this.workoutStarted = true;
     this.currentExerciseIndex = 0;
-    this.exerciseTimer = 0; // reset only when starting a workout
-    this.startExerciseTimer();
+    this.totalElapsedSeconds = 0; // reset only when starting a workout
+    this.completedExerciseIndices.clear();
+    this.computeRoutineTotalRequiredSeconds();
+    this.updateExerciseDuration(); // set required duration and remaining for first exercise
+    if (this.exerciseTimeRequiredSeconds > 0) {
+      this.startExerciseTimer();
+    }
   }
 
   nextExercise() {
     if (!this.routine) return;
     if (this.currentExerciseIndex < this.routine.exercises.length - 1) {
+      // stop current countdown
       this.stopExerciseTimer();
+
+      // optionally mark as completed if user moves on before timer hits zero
+      // uncomment if you want skipping to count as completion:
+      // if (this.exerciseTimeRequiredSeconds > 0 && this.exerciseRemainingSeconds > 0) {
+      //   this.completedExerciseIndices.add(this.currentExerciseIndex);
+      // }
+
       this.currentExerciseIndex++;
-      this.startExerciseTimer();
+
+      // prepare the next exercise countdown and start if it has duration
+      this.updateExerciseDuration();
+      if (this.exerciseTimeRequiredSeconds > 0) {
+        this.startExerciseTimer();
+      }
     }
   }
 
@@ -95,7 +125,10 @@ export class RoutineDetail implements OnInit, OnDestroy {
     if (this.currentExerciseIndex > 0) {
       this.stopExerciseTimer();
       this.currentExerciseIndex--;
-      this.startExerciseTimer();
+      this.updateExerciseDuration();
+      if (this.exerciseTimeRequiredSeconds > 0) {
+        this.startExerciseTimer();
+      }
     }
   }
 
@@ -104,15 +137,52 @@ export class RoutineDetail implements OnInit, OnDestroy {
     if (index < 0 || index >= this.routine.exercises.length) return;
     this.stopExerciseTimer();
     this.currentExerciseIndex = index;
-    this.startExerciseTimer();
+    this.updateExerciseDuration();
+    if (this.exerciseTimeRequiredSeconds > 0) {
+      this.startExerciseTimer();
+    }
+  }
+
+  private updateExerciseDuration() {
+    const currentExercise = this.getCurrentExercise();
+    const durationSec = currentExercise?.duration ? currentExercise.duration * 60 : 0;
+    this.exerciseTimeRequiredSeconds = durationSec;
+    // Reset the remaining seconds when switching to an exercise
+    this.exerciseRemainingSeconds = durationSec;
+
+    // Immediately mark exercises with no duration as completed
+    if (durationSec === 0) {
+      this.completedExerciseIndices.add(this.currentExerciseIndex);
+      // ensure timer is stopped
+      this.stopExerciseTimer();
+    }
   }
 
   startExerciseTimer() {
-    // Do not reset exerciseTimer here so time can accumulate across exercises.
-    if (this.timerInterval) return; // already running
+    // don't start if already running
+    if (this.timerInterval) return;
+
+    // if exercise has no duration, do nothing
+    if (this.exerciseTimeRequiredSeconds === 0 || this.exerciseRemainingSeconds === 0) {
+      this.isTimerRunning = false;
+      return;
+    }
+
     this.isTimerRunning = true;
     this.timerInterval = setInterval(() => {
-      this.exerciseTimer++;
+      // track total time optionally
+      this.totalElapsedSeconds++;
+
+      if (this.exerciseRemainingSeconds > 0) {
+        this.exerciseRemainingSeconds--;
+      }
+
+      // When it reaches zero, mark completed and stop the timer.
+      if (this.exerciseRemainingSeconds <= 0) {
+        this.completedExerciseIndices.add(this.currentExerciseIndex);
+        this.stopExerciseTimer();
+        // Wait for user to press Next (do not auto-advance)
+      }
     }, 1000);
   }
 
@@ -129,7 +199,10 @@ export class RoutineDetail implements OnInit, OnDestroy {
   }
 
   resumeTimer() {
-    this.startExerciseTimer();
+    // Only resume if there is remaining time
+    if (this.exerciseTimeRequiredSeconds > 0 && this.exerciseRemainingSeconds > 0) {
+      this.startExerciseTimer();
+    }
   }
 
   formatTime(seconds: number): string {
@@ -140,32 +213,32 @@ export class RoutineDetail implements OnInit, OnDestroy {
 
   // Complete / quick complete — ensure completed date is written before logging
   async completeWorkout() {
-  if (!this.routine) return;
-  if (!confirm('Mark this workout as complete?')) return;
+    if (!this.routine) return;
+    if (!confirm('Mark this workout as complete?')) return;
 
-  this.stopExerciseTimer();
-  if (!this.routine.id) return;
+    this.stopExerciseTimer();
+    if (!this.routine.id) return;
 
-  try {
-    await this.markRoutineCompleted(this.routine.id);
-    console.log('[RoutineDetail] Routine marked completed');
-  } catch (err) {
-    console.error('Error marking routine completed:', err);
-    alert('Failed to mark routine complete');
-    return;
+    try {
+      await this.markRoutineCompleted(this.routine.id);
+      console.log('[RoutineDetail] Routine marked completed');
+    } catch (err) {
+      console.error('Error marking routine completed:', err);
+      alert('Failed to mark routine complete');
+      return;
+    }
+
+    try {
+      await firstValueFrom(this.progressService.logWorkout(this.routine, this.workoutNotes));
+      console.log('[RoutineDetail] Workout logged successfully');
+      alert('🎉 Workout completed successfully!');
+      this.router.navigate(['/progress']);
+    } catch (err) {
+      console.error('Error logging workout:', err);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      alert('Failed to log workout: ' + errorMessage);
+    }
   }
-
-  try {
-    await firstValueFrom(this.progressService.logWorkout(this.routine, this.workoutNotes));
-    console.log('[RoutineDetail] Workout logged successfully');
-    alert('🎉 Workout completed successfully!');
-    this.router.navigate(['/progress']);
-  } catch (err) {
-    console.error('Error logging workout:', err);
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    alert('Failed to log workout: ' + errorMessage);
-  }
-}
 
   async quickComplete() {
     if (!this.routine) return;
@@ -201,16 +274,15 @@ export class RoutineDetail implements OnInit, OnDestroy {
   // DELETE Routine (user copy only)
   deleteRoutine() {
     if (!this.routine?.id) return;
-    if (!confirm('Are you sure you want to remove this routine from your library?')) return;
 
     this.routineService.deleteUserRoutine(this.routine.id).subscribe({
       next: () => {
-        alert('Routine removed from your library!');
+        alert('Routine deleted successfully!');
         this.router.navigate(['/routines']);
       },
       error: (error) => {
         console.error('Error deleting routine:', error);
-        alert('Failed to remove routine');
+        alert('Failed to delete routine');
       },
     });
   }
@@ -345,8 +417,47 @@ export class RoutineDetail implements OnInit, OnDestroy {
     return this.routine?.exercises[this.currentExerciseIndex];
   }
 
+  // remaining seconds for the current exercise (derived)
+  getRemainingTime(): number {
+    return this.exerciseRemainingSeconds ?? 0;
+  }
+
+  isCurrentExerciseComplete(): boolean {
+    // If exercise has no duration, it's considered complete.
+    if (this.exerciseTimeRequiredSeconds === 0) return true;
+    // Otherwise check if we've hit zero or it's in the completed set
+    return this.exerciseRemainingSeconds === 0 || this.completedExerciseIndices.has(this.currentExerciseIndex);
+  }
+
+  // If routine has an explicit total duration field (minutes) we honor it; otherwise we sum exercise durations
+  computeRoutineTotalRequiredSeconds() {
+    if (!this.routine) {
+      this.routineTotalRequiredSeconds = 0;
+      return;
+    }
+    // Support optional routine-level duration (minutes)
+    // @ts-ignore - some routines may include a `duration` property
+    const declared = (this.routine as any).duration;
+    if (declared && typeof declared === 'number' && declared > 0) {
+      this.routineTotalRequiredSeconds = declared * 60;
+      return;
+    }
+
+    // otherwise sum the exercise durations (in minutes -> seconds)
+    const totalMinutes = (this.routine.exercises || []).reduce((s, ex: any) => s + (ex.duration || 0), 0);
+    this.routineTotalRequiredSeconds = totalMinutes * 60;
+  }
+
   getProgressPercentage(): number {
     if (!this.routine || !this.routine.exercises || this.routine.exercises.length === 0) return 0;
     return ((this.currentExerciseIndex + 1) / this.routine.exercises.length) * 100;
+  }
+
+  confirmDeleteRoutine() {
+    const message = "Are you sure you want to delete this routine?";
+
+    if (confirm(message)) {
+      this.deleteRoutine();
+    }
   }
 }

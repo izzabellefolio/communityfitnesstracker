@@ -1,57 +1,67 @@
-<div 
-  class="page-wrapper d-flex justify-content-center align-items-start py-5"
-  style="background: linear-gradient(135deg, #f0f4ff, #d9e6ff); min-height: 100vh;"
->
-  <div 
-    class="card shadow-lg p-4 w-100"
-    style="max-width: 900px; border-radius: 15px; animation: fadeInUp 0.5s ease-out;"
-  >
+<div class="container mt-4">
 
-    <!-- Title -->
-    <h2 class="fw-bold mb-4" style="font-family: 'Poppins', sans-serif; color: #2a2a44;">
-      Create Custom Routine
-    </h2>
+  <!-- HEADER -->
+  <div class="card shadow-lg border-0 mb-4 header-card">
+    <div class="card-body p-4 d-flex justify-content-between align-items-center">
+
+      <div>
+        <a routerLink="/routines" class="back-link">← Back</a>
+
+        <h2 class="fw-bold mt-2 mb-1">Create Custom Routine</h2>
+
+        <small class="opacity-75">
+          Add exercises and schedule your routine
+        </small>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FORM CARD -->
+  <div class="card card-section fade-in shadow-sm border-0 rounded-4 mb-4 p-4">
 
     <!-- Step 1 -->
     <div class="mb-4">
-      <h5 class="fw-semibold mb-3">1. Basic Information</h5>
+      <h5 class="fw-bold mb-3">1. Basic Information</h5>
 
       <div class="mb-3">
-        <label class="form-label">Routine Name *</label>
+        <label class="form-label text-dark fw-semibold">Routine Name *</label>
         <input 
           type="text" 
-          class="form-control soft-input"
+          class="form-control"
           [(ngModel)]="routineName"
           placeholder="e.g., Morning Full-Body Workout"
+          style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);"
         >
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Description (Optional)</label>
+        <label class="form-label text-dark fw-semibold">Description (Optional)</label>
         <textarea 
-          class="form-control soft-input"
+          class="form-control"
           rows="3"
           [(ngModel)]="routineDescription"
           placeholder="Describe your routine..."
+          style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);"
         ></textarea>
       </div>
     </div>
 
-    <hr>
+    <hr class="my-4">
 
     <!-- Step 2 -->
     <div class="mb-4">
-      <h5 class="fw-semibold mb-3">2. Schedule</h5>
+      <h5 class="fw-bold mb-3">2. Schedule</h5>
 
-      <label class="form-label">Select Days *</label>
+      <label class="form-label text-dark fw-semibold">Select Days *</label>
       <div class="d-flex flex-wrap gap-2 mb-3">
         <button 
           *ngFor="let day of daysOfWeek"
           type="button"
-          class="btn soft-btn"
-          [style.background]="selectedDays.includes(day) ? 'linear-gradient(to right, #5a67d8, #7f9cf5)' : '#fff'"
-          [style.color]="selectedDays.includes(day) ? 'white' : '#5a67d8'"
-          style="border-radius: 10px; border: 1px solid #5a67d8;"
+          class="btn fw-semibold"
+          [style.background]="selectedDays.includes(day) ? 'linear-gradient(to right, #457B9D, #5d9cc6)' : '#ffffff'"
+          [style.color]="selectedDays.includes(day) ? 'white' : '#457B9D'"
+          style="border-radius: 20px; border: 1px solid #457B9D; padding: 0.5rem 1rem;"
           (click)="toggleDay(day)"
         >
           {{ day.substring(0, 3) }}
@@ -59,32 +69,34 @@
       </div>
 
       <div>
-        <label class="form-label">Time</label>
+        <label class="form-label text-dark fw-semibold">Time</label>
         <input 
           type="time" 
-          class="form-control soft-input"
+          class="form-control"
           [(ngModel)]="selectedTime"
+          style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);"
         >
       </div>
     </div>
 
-    <hr>
+    <hr class="my-4">
 
     <!-- Step 3 -->
     <div class="mb-4">
-      <h5 class="fw-semibold mb-3">3. Add Exercises *</h5>
+      <h5 class="fw-bold mb-3">3. Add Exercises *</h5>
 
       <!-- Existing Exercise List -->
       <div *ngIf="exercises.length > 0" class="mb-3">
         <div class="list-group">
           <div 
             *ngFor="let ex of exercises; let i = index" 
-            class="list-group-item soft-list-item"
+            class="list-group-item"
+            style="border-radius: 10px; margin-bottom: 8px; background: #f8f9fa; border: 1px solid rgba(69, 123, 157, 0.1);"
           >
             <div class="d-flex justify-content-between align-items-center">
               <div>
-                <strong>{{ ex.name }}</strong>
-                <span class="badge bg-secondary ms-2">{{ ex.type }}</span>
+                <strong class="text-dark">{{ ex.name }}</strong>
+                <span class="badge bg-primary ms-2" style="background: linear-gradient(to right, #457B9D, #5d9cc6) !important;">{{ ex.type }}</span>
                 <span class="badge bg-info ms-1">{{ ex.intensity }}</span>
                 <br>
                 <small class="text-muted">
@@ -94,7 +106,8 @@
 
               <button 
                 type="button" 
-                class="btn btn-sm btn-outline-danger soft-btn"
+                class="btn btn-sm btn-outline-danger fw-semibold"
+                style="border-radius: 20px;"
                 (click)="removeExercise(i)"
               >
                 Remove
@@ -105,60 +118,64 @@
       </div>
 
       <!-- Add Exercise Card -->
-      <div class="card p-3 soft-subcard">
-        <h6 class="fw-semibold mb-3">Add Exercise</h6>
+      <div class="card p-4" style="border-radius: 16px; background: #f8f9fa; border: 1px solid rgba(69, 123, 157, 0.1); box-shadow: 0 4px 12px rgba(69, 123, 157, 0.05);">
+        <h6 class="fw-bold text-dark mb-3">Add Exercise</h6>
 
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label class="form-label">Exercise Name</label>
+            <label class="form-label text-dark fw-semibold">Exercise Name</label>
             <input 
               type="text" 
-              class="form-control soft-input"
+              class="form-control"
               [(ngModel)]="currentExercise.name"
               placeholder="e.g., Push-ups"
+              style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);"
             >
           </div>
 
           <div class="col-md-6 mb-3">
-            <label class="form-label">Type</label>
-            <select class="form-select soft-input" [(ngModel)]="currentExercise.type">
+            <label class="form-label text-dark fw-semibold">Type</label>
+            <select class="form-select" [(ngModel)]="currentExercise.type" style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);">
               <option *ngFor="let type of exerciseTypes" [value]="type">{{ type }}</option>
             </select>
           </div>
 
           <div class="col-md-4 mb-3">
-            <label class="form-label">Sets</label>
+            <label class="form-label text-dark fw-semibold">Sets</label>
             <input 
               type="number" 
-              class="form-control soft-input"
+              class="form-control"
               [(ngModel)]="currentExercise.sets"
               min="1"
+              style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);"
             >
           </div>
 
           <div class="col-md-4 mb-3">
-            <label class="form-label">Reps</label>
+            <label class="form-label text-dark fw-semibold">Reps</label>
             <input 
               type="number" 
-              class="form-control soft-input"
+              class="form-control"
               [(ngModel)]="currentExercise.reps"
               min="0"
+              style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);"
             >
           </div>
 
           <div class="col-md-4 mb-3">
-            <label class="form-label">Duration (min)</label>
+            <label class="form-label text-dark fw-semibold">Duration (min)</label>
             <input 
               type="number" 
-              class="form-control soft-input"
+              class="form-control"
               [(ngModel)]="currentExercise.duration"
               min="0"
+              style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);"
             >
           </div>
 
           <div class="col-md-12 mb-3">
-            <label class="form-label">Intensity</label>
-            <select class="form-select soft-input" [(ngModel)]="currentExercise.intensity">
+            <label class="form-label text-dark fw-semibold">Intensity</label>
+            <select class="form-select" [(ngModel)]="currentExercise.intensity" style="border-radius: 10px; border: 1px solid rgba(69, 123, 157, 0.2);">
               <option *ngFor="let level of intensityLevels" [value]="level">{{ level }}</option>
             </select>
           </div>
@@ -166,8 +183,8 @@
 
         <button 
           type="button" 
-          class="btn text-white w-100 soft-btn"
-          style="background: linear-gradient(to right, #5a67d8, #7f9cf5);"
+          class="btn text-white w-100 fw-semibold"
+          style="background: linear-gradient(to right, #457B9D, #5d9cc6); border-radius: 10px;"
           (click)="addExercise()"
         >
           + Add Exercise
@@ -176,15 +193,15 @@
     </div>
 
     <!-- Footer Buttons -->
-    <div class="d-flex justify-content-between mt-4">
-      <a routerLink="/routines" class="btn btn-outline-secondary soft-btn">
+    <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+      <a routerLink="/routines" class="btn btn-outline-primary text-dark fw-semibold rounded-pill px-4">
         Cancel
       </a>
 
       <button 
         type="button" 
-        class="btn text-white soft-btn"
-        style="background: linear-gradient(to right, #5a67d8, #7f9cf5);"
+        class="btn text-white fw-semibold rounded-pill px-4"
+        style="background: linear-gradient(to right, #457B9D, #5d9cc6);"
         (click)="saveRoutine()"
       >
         Save Routine

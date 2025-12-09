@@ -1,296 +1,101 @@
-<div class="challenge-container" *ngIf="!isLoading; else loadingTemplate">
-  
-  <!-- Points and Streak Banner -->
-  <div class="stats-banner">
-    <div class="stats-grid">
-      <!-- Total Points -->
-      <div class="stat-card points-card">
-        <div class="stat-icon">🏆</div>
-        <div class="stat-content">
-          <h3>Total Points</h3>
-          <div class="stat-value">{{ totalPoints | number:'1.0-0' }}</div>
-          <p class="stat-trend" *ngIf="pointsToday > 0">
-            +{{ pointsToday }} today
-          </p>
-          <div class="progress-mini">
-            <div class="progress-fill" [style.width.%]="getPointsProgress()"></div>
-          </div>
-          <p class="stat-subtext">Next level: {{ pointsToNextLevel }} points</p>
-        </div>
-        <button class="btn-points-info" (click)="showPointsInfo()">
-          ℹ️
-        </button>
-      </div>
-
-      <!-- Current Streak -->
-      <div class="stat-card streak-card" [class.high-streak]="currentStreak >= 7">
-        <div class="stat-icon">🔥</div>
-        <div class="stat-content">
-          <h3>Current Streak</h3>
-          <div class="stat-value">{{ currentStreak }}</div>
-          <p class="stat-subtext" *ngIf="lastActivity">
-            Last activity: {{ lastActivity | date:'MMM d' }}
-          </p>
-          <div class="streak-badges">
-            <span *ngIf="currentStreak >= 3" class="streak-badge">3+ days</span>
-            <span *ngIf="currentStreak >= 7" class="streak-badge">1 week</span>
-            <span *ngIf="currentStreak >= 30" class="streak-badge">1 month</span>
-          </div>
-        </div>
-        <button class="btn-streak-info" (click)="showStreakInfo()">
-          📈
-        </button>
-      </div>
-
-      <!-- Challenge Stats -->
-      <div class="stat-card challenge-stats">
-        <div class="stat-icon">🎯</div>
-        <div class="stat-content">
-          <h3>Challenge Stats</h3>
-          <div class="stats-grid-small">
-            <div class="mini-stat">
-              <div class="mini-value">{{ completedChallenges }}</div>
-              <div class="mini-label">Completed</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-value">{{ successRate }}%</div>
-              <div class="mini-label">Success Rate</div>
-            </div>
-            <div class="mini-stat">
-              <div class="mini-value">{{ longestStreak }}</div>
-              <div class="mini-label">Best Streak</div>
-            </div>
-          </div>
-          <p class="stat-subtext">
-            Level {{ userLevel }} • {{ getRankTitle() }}
-          </p>
-        </div>
-      </div>
+<div class="challenge-container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Challenges</h2>
+    <div class="d-flex align-items-center gap-2">
+      <button
+        class="btn btn-outline-primary shiny"
+        title="Reload all challenge data"
+        (click)="loadAllData()">Refresh</button>
+      <span class="badge bg-primary fs-5 dynamic-badge">{{ totalPoints }} Total Points</span>
     </div>
   </div>
 
-  <!-- Date Change Notification -->
-  <div *ngIf="showDateChangeNotification" class="date-change-notification">
-    <div class="notification-content">
-      <span>📅 New day detected! Loading today's challenge...</span>
-      <button class="btn-notification" (click)="dismissNotification()">
-        Dismiss
-      </button>
-    </div>
-  </div>
-  
-  <!-- Header Section -->
-  <div class="challenge-header">
-    <div class="header-content">
-      <h1>Daily Fitness Challenges</h1>
-      <p class="subtitle">Complete daily exercises to build consistency and improve fitness</p>
-      
-      <div class="date-display">
-        <div class="current-date">
-          <span class="day-name">{{ dayName }}</span>
-          <span class="date-full">{{ currentDate | date:'fullDate' }}</span>
-        </div>
-        <div class="date-actions">
-          <button class="btn-date-action" (click)="checkDateManually()" title="Check for date change">
-            🔄 Check Date
-          </button>
-          <button class="btn-date-action" (click)="refreshChallenge()" title="Refresh challenge">
-            🔄 Refresh Challenge
-          </button>
-        </div>
-      </div>
-    </div>
+  <!-- Loading -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+    <p class="mt-3">Loading challenges...</p>
   </div>
 
-  <!-- Today's Challenge Card -->
-  <div class="todays-challenge" *ngIf="todaysChallenge">
-    <div class="challenge-card featured">
-      <div class="challenge-badge">Today's Challenge</div>
-      
-      <div class="challenge-header">
+  <div *ngIf="!loading">
+    <!-- Daily (3) -->
+    <div class="mb-4">
+      <h4 class="mb-3">📅 Today's Challenges</h4>
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 mb-3" *ngFor="let ch of dailyChallenges">
+          <app-challenge-card
+            [challenge]="ch"
+            [isCompleted]="isChallengeCompleted(ch.id, 'daily')"
+            (complete)="completeChallenge($event)">
+          </app-challenge-card>
+        </div>
+      </div>
+      <p *ngIf="!dailyChallenges || dailyChallenges.length === 0" class="text-muted">No daily challenges assigned.</p>
+    </div>
+
+    <!-- Weekly (7) -->
+    <div class="mb-4">
+      <h4 class="mb-3">📆 Weekly Challenges</h4>
+      <div class="row">
+        <div class="col-12 col-sm-6 col-md-4 mb-3" *ngFor="let ch of weeklyChallenges">
+          <app-challenge-card
+            [challenge]="ch"
+            [isCompleted]="isChallengeCompleted(ch.id, 'weekly')"
+            (complete)="completeChallenge($event)">
+          </app-challenge-card>
+        </div>
+      </div>
+      <p *ngIf="!weeklyChallenges || weeklyChallenges.length === 0" class="text-muted">No weekly challenges available.</p>
+    </div>
+
+    <!-- Completed list -->
+    <div class="card shadow-sm">
+      <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">🏆 Completed Challenges ({{ completedChallenges.length }})</h5>
         <div>
-          <h2>{{ todaysChallenge.title }}</h2>
-          <div class="challenge-meta">
-            <span class="difficulty-badge" [class]="todaysChallenge.difficulty.toLowerCase()">
-              {{ todaysChallenge.difficulty }}
-            </span>
-            <span class="category-badge">{{ todaysChallenge.category }}</span>
-            <span class="points-value">🎯 {{ getChallengePoints() }} points</span>
-          </div>
-          <p class="challenge-description">{{ todaysChallenge.description }}</p>
-        </div>
-        
-        <div class="challenge-completion" [class.completed]="todaysChallenge.completed">
-          <div class="completion-circle" [style.--progress]="completionPercentage">
-            <span>{{ completionPercentage }}%</span>
-          </div>
-          <div class="completion-status">
-            {{ todaysChallenge.completed ? '✅ Completed' : '🔄 In Progress' }}
-          </div>
+          <button class="btn btn-sm btn-outline-primary me-2" (click)="loadCompletedChallenges()">Refresh Completed</button>
         </div>
       </div>
+      <div class="card-body">
+        <div *ngIf="!loading && completedChallenges.length === 0" class="text-center text-muted py-3">
+          <p class="mb-2">You haven't completed any challenges yet, or your history failed to load.</p>
+          <div>
+            <button class="btn btn-sm btn-primary me-2" (click)="loadCompletedChallenges()">Try Reload</button>
+            <button class="btn btn-sm btn-link" (click)="loadAllData()">Reload All Data</button>
+          </div>
+          <small class="d-block text-muted mt-2">If the list still doesn't appear, check the browser console for Firestore errors (indexes/permissions).</small>
+        </div>
 
-      <!-- Exercises List -->
-      <div class="exercises-section">
-        <div class="section-header">
-          <h3>Today's Exercises</h3>
-          <div class="section-info">
-            <span class="points-info">Each exercise: {{ getExercisePoints() }} points</span>
-            <button class="btn-complete-all" 
-                    *ngIf="!todaysChallenge.completed"
-                    (click)="completeAllExercises()">
-              ✅ Complete All
-            </button>
-          </div>
+        <div *ngIf="completedChallenges.length > 0" class="table-completed-wrapper">
+          <table class="table table-hover align-items-center">
+            <colgroup>
+              <col style="width: 40%;">
+              <col style="width: 20%;">
+              <col style="width: 20%;">
+              <col style="width: 20%;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Challenge</th>
+                <th>Type</th>
+                <th>Points</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of completedChallenges" class="completed-row">
+                <td>{{ c.challengeTitle }}</td>
+                <td>
+                  <span class="badge" [ngClass]="c.challengeType === 'daily' ? 'bg-primary' : 'bg-info'">
+                    {{ c.challengeType | titlecase }}
+                  </span>
+                </td>
+                <td class="points-cell"><span class="points-pop">+{{ c.points }}</span></td>
+                <td class="date-cell">{{ c.completedAt | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        
-        <div class="exercises-list">
-          <div *ngFor="let exercise of todaysChallenge.exercises" 
-               class="exercise-item" 
-               [class.completed]="exercise.completed">
-            
-            <div class="exercise-checkbox">
-              <input type="checkbox" 
-                     [id]="'ex-' + exercise.id"
-                     [checked]="exercise.completed"
-                     (change)="toggleExercise(exercise.id)">
-              <label [for]="'ex-' + exercise.id"></label>
-            </div>
-            
-            <div class="exercise-content">
-              <div class="exercise-header">
-                <div class="exercise-title">
-                  <h4>{{ exercise.name }}</h4>
-                  <div class="exercise-points">
-                    <span class="points-badge">+{{ getExercisePoints() }} pts</span>
-                  </div>
-                </div>
-                <span class="muscle-group">{{ exercise.muscleGroup }}</span>
-              </div>
-              
-              <p class="exercise-description">{{ exercise.description }}</p>
-              
-              <div class="exercise-specs">
-                <div class="spec">
-                  <strong>Sets:</strong> {{ exercise.sets }}
-                </div>
-                <div class="spec">
-                  <strong>Reps:</strong> {{ exercise.reps }}
-                </div>
-                <div class="spec" *ngIf="exercise.restTime">
-                  <strong>Rest:</strong> {{ exercise.restTime }}s
-                </div>
-                <div class="spec" *ngIf="exercise.equipment">
-                  <strong>Equipment:</strong> {{ exercise.equipment }}
-                </div>
-              </div>
-            </div>
-            
-            <div class="exercise-actions">
-              <div class="exercise-status">
-                <span *ngIf="exercise.completed" class="completed-badge">
-                  ✓ +{{ getExercisePoints() }} pts
-                </span>
-                <button *ngIf="!exercise.completed" 
-                        class="btn-mark-complete" 
-                        (click)="markExerciseComplete(exercise.id)">
-                  Mark Complete (+{{ getExercisePoints() }} pts)
-                </button>
-              </div>
-              <div class="exercise-progress">
-                <div class="reps-tracker" *ngIf="!exercise.completed">
-                  <button class="btn-rep" (click)="updateExerciseReps(exercise.id, -1)">-</button>
-                  <span class="current-reps">{{ getCompletedReps(exercise) }}/{{ exercise.reps }}</span>
-                  <button class="btn-rep" (click)="updateExerciseReps(exercise.id, 1)">+</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Progress & Points Summary -->
-      <div class="challenge-summary">
-        <div class="summary-grid">
-          <div class="summary-item">
-            <span class="summary-label">Progress</span>
-            <div class="progress-bar-large">
-              <div class="progress-fill" [style.width.%]="completionPercentage"></div>
-            </div>
-            <span class="summary-value">{{ completedExercises }}/{{ totalExercises }} exercises</span>
-          </div>
-          
-          <div class="summary-item">
-            <span class="summary-label">Points Earned</span>
-            <div class="points-display">
-              <span class="points-value">{{ getEarnedPoints() }}</span>
-              <span class="points-max">/{{ getTotalPoints() }} pts</span>
-            </div>
-            <span class="summary-value">{{ getPointsPercentage() }}% of total</span>
-          </div>
-          
-          <div class="summary-item">
-            <span class="summary-label">Time Estimate</span>
-            <div class="time-estimate">
-              <span class="time-value">{{ estimateTime() }} min</span>
-            </div>
-            <span class="summary-value">Approx. completion time</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Actions -->
-      <div class="challenge-actions">
-        <button class="btn btn-secondary" (click)="viewChallengeHistory()">
-          📋 View History
-        </button>
-        <button *ngIf="!todaysChallenge.completed" 
-                class="btn btn-primary" 
-                (click)="completeChallenge()"
-                [disabled]="!allExercisesCompleted">
-          🏁 Complete Challenge (+{{ getChallengeBonus() }} bonus)
-        </button>
-        <button class="btn btn-share" (click)="shareProgress()">
-          📤 Share Progress
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Streak & Points Info Panel -->
-  <div *ngIf="showInfoPanel" class="info-panel">
-    <div class="panel-header">
-      <h3>Points & Streak System</h3>
-      <button class="btn-close" (click)="closeInfoPanel()">×</button>
-    </div>
-    <div class="panel-content">
-      <div class="points-system">
-        <h4>How Points Work:</h4>
-        <ul>
-          <li>✅ Each completed exercise: <strong>10 points</strong></li>
-          <li>🎯 Complete daily challenge: <strong>50 bonus points</strong></li>
-          <li>🔥 7-day streak bonus: <strong>100 points</strong></li>
-          <li>🏆 30-day streak bonus: <strong>500 points</strong></li>
-          <li>🌟 Perfect week (7/7 days): <strong>200 points</strong></li>
-        </ul>
-      </div>
-      <div class="streak-system">
-        <h4>How Streak Works:</h4>
-        <ul>
-          <li>🔥 Streak continues if you complete at least one exercise daily</li>
-          <li>⏰ Streak resets after 24 hours of inactivity</li>
-          <li>📊 Track your longest streak in stats</li>
-          <li>🏅 Earn badges at 3, 7, 30, and 100 days</li>
-        </ul>
       </div>
     </div>
   </div>
 </div>
-
-<!-- Loading Template -->
-<ng-template #loadingTemplate>
-  <div class="loading-state">
-    <div class="loading-spinner"></div>
-    <p>Loading your daily challenge...</p>
-  </div>
-</ng-template>

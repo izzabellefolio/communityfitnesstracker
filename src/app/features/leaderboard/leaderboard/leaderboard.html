@@ -11,61 +11,64 @@
 
   <div *ngIf="!loading">
     <!-- Current User Rank Card -->
-    <div *ngIf="currentUserRank" class="alert alert-info mb-4">
+    <div *ngIf="currentUserRank && currentUserEntry" class="alert alert-info mb-4 dynamic-current">
       <div class="d-flex justify-content-between align-items-center">
-        <div class="">
-          <br>
-          <strong>Your Rank:</strong> #{{ currentUserRank }} out of {{ leaderboardEntries.length }} participants
+        <div>
+          <div class="mb-2">
+            <strong>Your Rank:</strong> #{{ currentUserRank }} / {{ leaderboardEntries.length }}
+          </div>
+          <div class="row g-3">
+            <div class="col-auto">
+              <small class="text-muted">Challenges Completed:</small><br>
+              <strong class="text-info">{{ currentUserEntry.completedChallenges }} 🎯</strong>
+            </div>
+            <div class="col-auto">
+              <small class="text-muted">Total Points:</small><br>
+              <strong class="text-success">{{ currentUserEntry.totalPoints }} ⭐</strong>
+            </div>
+          </div>
         </div>
-        <span class="fs-3">{{ getRankIcon(currentUserRank) }}</span>
+        <div class="text-center rank-icon-lg">{{ getRankIcon(currentUserRank) }}</div>
       </div>
     </div>
 
     <!-- Top 10 Podium -->
     <div class="card shadow-sm mb-4">
       <div class="card-header bg-primary text-white">
-        <h4 class="mb-0">👑 Top 10 Champions</h4>
+        <h4 class="mb-0 text-white">👑 Top 10 Champions</h4>
       </div>
       <div class="card-body">
         <div class="row">
           <!-- Podium Top 3 -->
           <div class="col-12 mb-4" *ngIf="topUsers.length >= 3">
-            <div class="row text-center">
+            <div class="row podium-row text-center align-items-end flex-nowrap no-wrap-podium">
               <!-- 2nd Place -->
-              <div class="col-4" *ngIf="topUsers[1]">
-                <div class="card border-secondary" [class.border-success]="isCurrentUser(topUsers[1].userId)">
-                  <div class="card-body">
-                    <div class="fs-1">🥈</div>
-                    <h5>{{ topUsers[1].displayName }}</h5>
-                    <p class="mb-1"><strong>{{ topUsers[1].totalPoints }}</strong> points</p>
-                    <small class="text-muted">{{ topUsers[1].completedChallenges }} challenges</small>
-                  </div>
+              <div class="col-auto podium-col" *ngIf="topUsers[1]">
+                <div class="podium-card podium-2" [class.current-user]="isCurrentUser(topUsers[1].userId)">
+                  <div class="medal">🥈</div>
+                  <div class="name">{{ topUsers[1].displayName }}</div>
+                  <div class="score">{{ topUsers[1].totalPoints }} pts</div>
+                  <div class="meta small text-muted">{{ topUsers[1].completedChallenges }} challenges</div>
                 </div>
               </div>
 
               <!-- 1st Place -->
-              <div class="col-4" *ngIf="topUsers[0]">
-                <div class="card border-warning" [class.border-success]="isCurrentUser(topUsers[0].userId)">
-                  <div class="card-body">
-                    <div class="fs-1">🥇</div>
-                    <h4>{{ topUsers[0].displayName }}</h4>
-                    <p class="mb-1"><strong>{{ topUsers[0].totalPoints }}</strong> points</p>
-                    <small class="text-muted">{{ topUsers[0].completedChallenges }} challenges</small>
-                    <br>
-                    <span class="badge bg-warning text-dark mt-2">Champion</span>
-                  </div>
+              <div class="col-auto podium-col" *ngIf="topUsers[0]">
+                <div class="podium-card podium-1" [class.current-user]="isCurrentUser(topUsers[0].userId)">
+                  <div class="medal">🥇</div>
+                  <div class="name">{{ topUsers[0].displayName }}</div>
+                  <div class="score">{{ topUsers[0].totalPoints }} pts</div>
+                  <div class="meta small text-muted">{{ topUsers[0].completedChallenges }} challenges</div>
                 </div>
               </div>
 
               <!-- 3rd Place -->
-              <div class="col-4" *ngIf="topUsers[2]">
-                <div class="card border-danger" [class.border-success]="isCurrentUser(topUsers[2].userId)">
-                  <div class="card-body">
-                    <div class="fs-1">🥉</div>
-                    <h5>{{ topUsers[2].displayName }}</h5>
-                    <p class="mb-1"><strong>{{ topUsers[2].totalPoints }}</strong> points</p>
-                    <small class="text-muted">{{ topUsers[2].completedChallenges }} challenges</small>
-                  </div>
+              <div class="col-auto podium-col" *ngIf="topUsers[2]">
+                <div class="podium-card podium-3" [class.current-user]="isCurrentUser(topUsers[2].userId)">
+                  <div class="medal">🥉</div>
+                  <div class="name">{{ topUsers[2].displayName }}</div>
+                  <div class="score">{{ topUsers[2].totalPoints }} pts</div>
+                  <div class="meta small text-muted">{{ topUsers[2].completedChallenges }} challenges</div>
                 </div>
               </div>
             </div>
@@ -74,32 +77,55 @@
           <!-- 4th-10th Place -->
           <div class="col-12">
             <div class="list-group">
-              <div 
-                *ngFor="let entry of topUsers.slice(3, 10)" 
-                class="list-group-item"
+              <div
+                *ngFor="let entry of topUsers.slice(3, 10)"
+                class="list-group-item d-flex justify-content-between align-items-center leaderboard-item"
                 [class.list-group-item-success]="isCurrentUser(entry.userId)">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <span class="badge me-3" [class]="getRankBadgeClass(entry.rank)" style="min-width: 40px;">
-                      #{{ entry.rank }}
-                    </span>
-                    <div>
-                      <h6 class="mb-0">
-                        {{ entry.displayName }}
-                        <span *ngIf="isCurrentUser(entry.userId)" class="badge bg-success ms-2">You</span>
-                      </h6>
-                      <small class="text-muted">
-                        {{ entry.completedChallenges }} challenges | 
-                        {{ entry.currentStreak }} day streak
-                      </small>
-                    </div>
+                <div class="d-flex align-items-center gap-3">
+                  <div class="rank-bubble" [ngClass]="getRankBadgeClass(entry.rank)">
+                    #{{ entry.rank }}
                   </div>
-                  <div class="text-end">
-                    <strong class="fs-5">{{ entry.totalPoints }}</strong>
-                    <div><small class="text-muted">points</small></div>
+                  <div class="user-meta">
+                    <div class="user-name">
+                      <strong>{{ entry.displayName }}</strong>
+                      <small *ngIf="isCurrentUser(entry.userId)" class="badge bg-success ms-2">You</small>
+                    </div>
+                    <div class="small text-muted">{{ entry.completedChallenges }} challenges</div>
+                  </div>
+                </div>
+
+                <div class="score-block text-end">
+                  <div class="points-number">{{ entry.totalPoints }}</div>
+                  <div class="points-bar">
+                    <div class="points-fill"
+                      [style.width.%]="topUsers.length && topUsers[0]?.totalPoints ? (entry.totalPoints / topUsers[0].totalPoints) * 100 : 0">
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <!-- Current User if not in top 10 -->
+              <div
+                *ngIf="currentUserEntry && currentUserRank && currentUserRank > 10"
+                class="list-group-item list-group-item-success d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="rank-bubble" [ngClass]="getRankBadgeClass(currentUserRank)">
+                    #{{ currentUserRank }}
+                  </div>
+                  <div>
+                    <div class="user-name">
+                      <strong>{{ currentUserEntry.displayName }}</strong>
+                      <span class="badge bg-success ms-2">You</span>
+                    </div>
+                    <small class="text-muted">{{ currentUserEntry.completedChallenges }} challenges</small>
+                  </div>
+                </div>
+                <div class="text-end">
+                  <strong class="fs-5">{{ currentUserEntry.totalPoints }}</strong>
+                  <div><small class="text-muted">points</small></div>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -121,24 +147,26 @@
 
         <!-- Leaderboard Table -->
         <div *ngIf="leaderboardEntries.length > 0" class="table-responsive">
-          <table class="table table-hover">
+          <table class="table table-hover align-middle">
             <thead>
               <tr>
-                <th style="width: 80px;">Rank</th>
+                <th style="width: 100px;">Rank</th>
                 <th>User</th>
                 <th class="text-center">Challenges</th>
-                <th class="text-center">Streak</th>
                 <th class="text-end">Points</th>
               </tr>
             </thead>
             <tbody>
-              <tr 
+              <tr
                 *ngFor="let entry of getPaginatedEntries()"
                 [class.table-success]="isCurrentUser(entry.userId)">
                 <td>
-                  <span class="badge" [class]="getRankBadgeClass(entry.rank)">
-                    {{ getRankIcon(entry.rank) }} #{{ entry.rank }}
-                  </span>
+                  <div class="rank-cell d-flex align-items-center gap-2">
+                    <span class="rank-emoji">{{ getRankIcon(entry.rank) }}</span>
+                    <span class="badge" [class]="getRankBadgeClass(entry.rank)">
+                      #{{ entry.rank }}
+                    </span>
+                  </div>
                 </td>
                 <td>
                   <div>
@@ -148,9 +176,6 @@
                 </td>
                 <td class="text-center">
                   <span class="badge bg-primary">{{ entry.completedChallenges }}</span>
-                </td>
-                <td class="text-center">
-                  <span class="badge bg-warning text-dark">{{ entry.currentStreak }} 🔥</span>
                 </td>
                 <td class="text-end">
                   <strong class="fs-5">{{ entry.totalPoints }}</strong>
@@ -166,47 +191,19 @@
             <li class="page-item" [class.disabled]="currentPage === 1">
               <button class="page-link" (click)="previousPage()">Previous</button>
             </li>
-            
-            <li 
-              *ngFor="let page of getPageNumbers()" 
+
+            <li
+              *ngFor="let page of getPageNumbers()"
               class="page-item"
               [class.active]="page === currentPage">
               <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
             </li>
-            
+
             <li class="page-item" [class.disabled]="currentPage === totalPages">
               <button class="page-link" (click)="nextPage()">Next</button>
             </li>
           </ul>
         </nav>
-      </div>
-    </div>
-
-    <!-- Stats Summary -->
-    <div class="row mt-4">
-      <div class="col-md-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h3>{{ leaderboardEntries.length }}</h3>
-            <p class="text-muted mb-0">Total Participants</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h3>{{ topUsers[0]?.totalPoints || 0 }}</h3>
-            <p class="text-muted mb-0">Top Score</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h3>{{ topUsers[0]?.currentStreak || 0 }}</h3>
-            <p class="text-muted mb-0">Longest Streak</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>

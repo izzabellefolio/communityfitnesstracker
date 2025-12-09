@@ -15,6 +15,17 @@ export interface WorkoutLogModel {
   weight?: number;
 }
 
+export interface WorkoutLog {
+  id?: string;
+  userId: string;
+  date: Date;
+  totalCalories: number;
+  totalDuration: number;
+  exercises: any[];
+  intensityScore?: number;
+}
+
+
 export interface UserStats {
   streak: number;
   totalWorkouts: number;
@@ -22,4 +33,15 @@ export interface UserStats {
   caloriesBurned: number;
   currentWeight?: number;
   lastWorkoutDate?: Date;
+}
+
+export interface UserMetrics {
+  id?: string;
+  userId: string;
+  weight: number;
+  height: number;
+  metabolism: 'slow' | 'medium' | 'fast';
+  gender: 'male' | 'female' | 'other';
+  bmi?: number;
+  lastUpdated?: Date;
 }
