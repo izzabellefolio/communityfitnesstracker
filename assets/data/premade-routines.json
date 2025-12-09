@@ -1,0 +1,103 @@
+[
+  {
+    "name": "Beginner Full Body Workout",
+    "description": "Perfect for fitness beginners. Works all major muscle groups.",
+    "schedule": ["Monday", "Wednesday", "Friday"],
+    "time": "09:00",
+    "isPremade": true,
+    "userId": "system",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "exercises": [
+      { "name": "Push-ups", "type": "Strength", "sets": 3, "reps": 10, "duration": 0, "intensity": "Medium" },
+      { "name": "Bodyweight Squats", "type": "Strength", "sets": 3, "reps": 15, "duration": 0, "intensity": "Medium" },
+      { "name": "Plank", "type": "Strength", "sets": 3, "reps": 0, "duration": 1, "intensity": "Medium" },
+      { "name": "Lunges", "type": "Strength", "sets": 3, "reps": 10, "duration": 0, "intensity": "Medium" },
+      { "name": "Mountain Climbers", "type": "Cardio", "sets": 3, "reps": 20, "duration": 0, "intensity": "High" }
+    ]
+  },
+
+  {
+    "name": "Cardio Blast",
+    "description": "High-intensity cardio to burn calories and boost endurance.",
+    "schedule": ["Tuesday", "Thursday", "Saturday"],
+    "time": "07:00",
+    "isPremade": true,
+    "userId": "system",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "exercises": [
+      { "name": "Jumping Jacks", "type": "Cardio", "sets": 3, "reps": 30, "duration": 0, "intensity": "High" },
+      { "name": "Running in Place", "type": "Cardio", "sets": 1, "reps": 0, "duration": 1, "intensity": "High" },
+      { "name": "Burpees", "type": "Cardio", "sets": 3, "reps": 15, "duration": 0, "intensity": "High" },
+      { "name": "High Knees", "type": "Cardio", "sets": 3, "reps": 30, "duration": 0, "intensity": "High" },
+      { "name": "Jump Rope", "type": "Cardio", "sets": 3, "reps": 0, "duration": 1, "intensity": "High" }
+    ]
+  },
+
+  {
+    "name": "Core Strength Builder",
+    "description": "Focus on building a strong, stable core.",
+    "schedule": ["Monday", "Wednesday", "Friday"],
+    "time": "18:00",
+    "isPremade": true,
+    "userId": "system",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "exercises": [
+      { "name": "Plank", "type": "Strength", "sets": 4, "reps": 0, "duration": 1, "intensity": "Medium" },
+      { "name": "Russian Twists", "type": "Strength", "sets": 3, "reps": 20, "duration": 0, "intensity": "Medium" },
+      { "name": "Bicycle Crunches", "type": "Strength", "sets": 3, "reps": 20, "duration": 0, "intensity": "Medium" },
+      { "name": "Leg Raises", "type": "Strength", "sets": 3, "reps": 15, "duration": 0, "intensity": "High" },
+      { "name": "Side Plank", "type": "Strength", "sets": 3, "reps": 0, "duration": 1, "intensity": "Medium" }
+    ]
+  },
+
+  {
+    "name": "Upper Body Power",
+    "description": "Build strength in chest, arms, shoulders, and back.",
+    "schedule": ["Tuesday", "Thursday"],
+    "time": "17:00",
+    "isPremade": true,
+    "userId": "system",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "exercises": [
+      { "name": "Push-ups", "type": "Strength", "sets": 4, "reps": 15, "duration": 0, "intensity": "High" },
+      { "name": "Diamond Push-ups", "type": "Strength", "sets": 3, "reps": 10, "duration": 0, "intensity": "High" },
+      { "name": "Pike Push-ups", "type": "Strength", "sets": 3, "reps": 12, "duration": 0, "intensity": "Medium" },
+      { "name": "Tricep Dips", "type": "Strength", "sets": 3, "reps": 15, "duration": 0, "intensity": "Medium" },
+      { "name": "Arm Circles", "type": "Strength", "sets": 2, "reps": 20, "duration": 0, "intensity": "Low" }
+    ]
+  },
+
+  {
+    "name": "Lower Body Blast",
+    "description": "Strengthen legs, glutes, and improve lower body power.",
+    "schedule": ["Monday", "Thursday"],
+    "time": "16:00",
+    "isPremade": true,
+    "userId": "system",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "exercises": [
+      { "name": "Squats", "type": "Strength", "sets": 4, "reps": 20, "duration": 0, "intensity": "High" },
+      { "name": "Jump Squats", "type": "Strength", "sets": 3, "reps": 15, "duration": 0, "intensity": "High" },
+      { "name": "Lunges", "type": "Strength", "sets": 3, "reps": 15, "duration": 0, "intensity": "Medium" },
+      { "name": "Wall Sit", "type": "Strength", "sets": 3, "reps": 0, "duration": 1, "intensity": "High" },
+      { "name": "Calf Raises", "type": "Strength", "sets": 4, "reps": 20, "duration": 0, "intensity": "Low" }
+    ]
+  },
+
+  {
+    "name": "Morning Yoga Flow",
+    "description": "Gentle yoga routine to start your day with flexibility and mindfulness.",
+    "schedule": ["Monday", "Wednesday", "Friday", "Sunday"],
+    "time": "06:00",
+    "isPremade": true,
+    "userId": "system",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "exercises": [
+      { "name": "Sun Salutation", "type": "Flexibility", "sets": 3, "reps": 5, "duration": 0, "intensity": "Low" },
+      { "name": "Downward Dog", "type": "Flexibility", "sets": 1, "reps": 0, "duration": 2, "intensity": "Low" },
+      { "name": "Warrior Pose", "type": "Flexibility", "sets": 2, "reps": 0, "duration": 1, "intensity": "Medium" },
+      { "name": "Child's Pose", "type": "Flexibility", "sets": 1, "reps": 0, "duration": 3, "intensity": "Low" },
+      { "name": "Cat-Cow Stretch", "type": "Flexibility", "sets": 3, "reps": 10, "duration": 0, "intensity": "Low" }
+    ]
+  }
+]
